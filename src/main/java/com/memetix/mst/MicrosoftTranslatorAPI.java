@@ -318,22 +318,17 @@ public abstract class MicrosoftTranslatorAPI {
     }
 
     protected static String buildStringArrayParam(Object[] values) {
-        StringBuilder targetString = new StringBuilder("[\"");
+        JSONArray list = new JSONArray();
         String value;
         for (Object obj : values) {
             if (obj != null) {
                 value = obj.toString();
-                if (value.length() != 0) {
-                    if (targetString.length() > 2) {
-                        targetString.append(",\"");
-                    }
-                    targetString.append(value);
-                    targetString.append("\"");
+                if(value.length()!=0) {
+                    list.add(value);
                 }
             }
         }
-        targetString.append("]");
-        return targetString.toString();
+        return list.toJSONString();
     }
 
 }
