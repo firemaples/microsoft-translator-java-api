@@ -85,6 +85,10 @@ public enum Language {
      */
     private Map<Language, String> localizedCache = new ConcurrentHashMap<Language, String>();
 
+    private static LanguageService languageService;
+
+    private static GetLanguagesForTranslateService getLanguagesForTranslateService;
+
     /**
      * Enum constructor.
      *
@@ -113,12 +117,23 @@ public enum Language {
         return language;
     }
 
-    public static void setKey(String pKey) {
-        LanguageService.setKey(pKey);
+    public static void setSubscriptionKey(String pSubscriptionKey) {
+        if (languageService == null) {
+            languageService = new LanguageService(pSubscriptionKey);
+        } else {
+            languageService.setSubscriptionKey(pSubscriptionKey);
+        }
+
+        if (getLanguagesForTranslateService == null) {
+            getLanguagesForTranslateService = new GetLanguagesForTranslateService(pSubscriptionKey);
+        } else {
+            getLanguagesForTranslateService.setSubscriptionKey(pSubscriptionKey);
+        }
     }
 
-    public static void setSubscriptionKey(String pSubscriptionKey) {
-        LanguageService.setSubscriptionKey(pSubscriptionKey);
+    public static void reset() {
+        languageService = null;
+        getLanguagesForTranslateService = null;
     }
 
     /**
@@ -144,8 +159,12 @@ public enum Language {
             if (this == Language.AUTO_DETECT || locale == Language.AUTO_DETECT) {
                 localizedName = "Auto Detect";
             } else {
+                if (languageService == null) {
+                    throw new IllegalStateException("SubscriptionKey not set");
+                }
+
                 //If not in the cache, pre-load all the Language names for this locale
-                String[] names = LanguageService.execute(Language.values(), locale);
+                String[] names = languageService.execute(Language.values(), locale);
                 int i = 0;
                 for (Language lang : Language.values()) {
                     if (lang != Language.AUTO_DETECT) {
@@ -160,7 +179,10 @@ public enum Language {
     }
 
     public static List<String> getLanguageCodesForTranslation() throws Exception {
-        String[] codes = GetLanguagesForTranslateService.execute();
+        if (getLanguagesForTranslateService == null) {
+            throw new IllegalStateException("SubscriptionKey not set");
+        }
+        String[] codes = getLanguagesForTranslateService.execute();
         return Arrays.asList(codes);
     }
 
@@ -204,6 +226,10 @@ public enum Language {
     private final static class LanguageService extends MicrosoftTranslatorAPI {
         private static final String SERVICE_URL = "http://api.microsofttranslator.com/V2/Ajax.svc/GetLanguageNames?";
 
+        public LanguageService(String subscriptionKey) {
+            super(subscriptionKey);
+        }
+
         /**
          * Detects the language of a supplied String.
          *
@@ -211,7 +237,7 @@ public enum Language {
          * @return A DetectResult object containing the language, confidence and reliability.
          * @throws Exception on error.
          */
-        public static String[] execute(final Language[] targets, final Language locale) throws Exception {
+        public String[] execute(final Language[] targets, final Language locale) throws Exception {
             //Run the basic service validations first
             validateServiceState();
             String[] localizedNames = new String[0];
@@ -222,7 +248,6 @@ public enum Language {
             final String targetString = buildStringArrayParam(Language.values());
 
             final URL url = new URL(SERVICE_URL
-                    + (apiKey != null ? PARAM_APP_ID + URLEncoder.encode(apiKey, ENCODING) : "")
                     + PARAM_LOCALE + URLEncoder.encode(locale.toString(), ENCODING)
                     + PARAM_LANGUAGE_CODES + URLEncoder.encode(targetString, ENCODING));
             localizedNames = retrieveStringArr(url);
@@ -234,6 +259,10 @@ public enum Language {
     private final static class GetLanguagesForTranslateService extends MicrosoftTranslatorAPI {
         private static final String SERVICE_URL = "http://api.microsofttranslator.com/V2/Ajax.svc/GetLanguagesForTranslate?";
 
+        public GetLanguagesForTranslateService(String subscriptionKey) {
+            super(subscriptionKey);
+        }
+
         /**
          * Detects the language of a supplied String.
          *
@@ -241,12 +270,12 @@ public enum Language {
          * @return A DetectResult object containing the language, confidence and reliability.
          * @throws Exception on error.
          */
-        public static String[] execute() throws Exception {
+        public String[] execute() throws Exception {
             //Run the basic service validations first
             validateServiceState();
             String[] codes = new String[0];
 
-            final URL url = new URL(SERVICE_URL + (apiKey != null ? PARAM_APP_ID + URLEncoder.encode(apiKey, ENCODING) : ""));
+            final URL url = new URL(SERVICE_URL);
             codes = retrieveStringArr(url);
             return codes;
         }

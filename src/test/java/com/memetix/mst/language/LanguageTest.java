@@ -17,8 +17,6 @@
  */
 package com.memetix.mst.language;
 
-import com.memetix.mst.translate.Translate;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -33,33 +31,27 @@ import java.util.Properties;
 import static org.junit.Assert.assertEquals;
 
 /**
- *
  * @author Jonathan Griggs <jonathan.griggs at gmail.com>
  */
 public class LanguageTest {
     Properties p;
-    
+
     @Rule
     public ExpectedException exception = ExpectedException.none();
-    
-    
+
+
     @Before
     public void setUp() throws Exception {
         p = new Properties();
         URL url = ClassLoader.getSystemResource("META-INF/config.properties");
         p.load(url.openStream());
-        String apiKey = p.getProperty("microsoft.translator.api.key");
-        if(System.getProperty("test.api.key")!=null) {
-            apiKey = System.getProperty("test.api.key").split(",")[0];
-        }
         String subscriptionKey = p.getProperty("microsoft.translator.api.subscriptionKey");
-        if(System.getProperty("test.api.key")!=null) {
+        if (System.getProperty("test.api.key") != null) {
             subscriptionKey = System.getProperty("test.api.key").split(",")[1];
         }
-        Translate.setKey(apiKey);
-        Translate.setSubscriptionKey(subscriptionKey);
+        Language.setSubscriptionKey(subscriptionKey);
     }
-    
+
     @After
     public void tearDown() throws Exception {
 
@@ -87,33 +79,26 @@ public class LanguageTest {
         Language result = Language.fromString(pLanguage);
         assertEquals(expResult, result);
     }
-    
-    @Test
-    public void testFromString_ClientIdOnly() {
-        String pLanguage = "en";
-        Language.setKey(null);
-        Language expResult = Language.ENGLISH;
-        Language result = Language.fromString(pLanguage);
-        assertEquals(expResult, result);
-    }
+
     @Test
     public void testGetLanguage_NoKey() throws Exception {
-        Language.setKey(null);
         Language.setSubscriptionKey(null);
         Language locale = Language.PERSIAN;
-        
+
         exception.expect(RuntimeException.class);
-        exception.expectMessage("Must provide a Windows Azure Marketplace Client Id and Client Secret - Please see http://msdn.microsoft.com/en-us/library/hh454950.aspx for further documentation");
+        exception.expectMessage("Must provide a Windows Azure Marketplace SubscriptionKey - Please see https://www.microsoft.com/cognitive-services/en-us/translator-api/documentation/TranslatorInfo/overview for further documentation");
         Language.FRENCH.getName(locale);
     }
-    
+
+//    @Ignore("Should be fixed")
     @Test
     public void testGetLanguage_WrongKey() throws Exception {
-        Language.setKey("wrong_key");
+        Language.reset();
+        Language.setSubscriptionKey("wrong_key");
         Language locale = Language.PERSIAN;
-        
-        exception.expect(RuntimeException.class);
-        exception.expectMessage("INVALID_API_KEY - Please set the API Key with your Bing Developer's Key");
+
+        exception.expect(Exception.class);
+        exception.expectMessage("[microsoft-translator-api] Error retrieving translation.");
         Language.FRENCH.getName(locale);
     }
 
@@ -128,7 +113,7 @@ public class LanguageTest {
         assertEquals(expResult, result);
     }
 
-    
+
     /**
      * Test of getLanguageName method, of class Language.
      */
@@ -138,31 +123,31 @@ public class LanguageTest {
         String expResult = "French";
         String result = Language.FRENCH.getName(locale);
         assertEquals(expResult, result);
-        
+
         locale = Language.FRENCH;
         expResult = "Anglais";
         result = Language.ENGLISH.getName(locale);
         assertEquals(expResult, result);
     }
-    
+
     @Test
     public void testGetAllNamesLocalizedCached() throws Exception {
         //Flush the caches, so we can test for timing
         Language.flushNameCache();
-        
-        
+
+
         long startTime1 = System.currentTimeMillis();
-        for(Language lang : Language.values()) {
+        for (Language lang : Language.values()) {
             lang.getName(Language.FRENCH);
             //System.out.println(name + " : " + lang.toString());
         }
-        long totalTime1 = System.currentTimeMillis()-startTime1;
-        
+        long totalTime1 = System.currentTimeMillis() - startTime1;
+
         long startTime2 = System.currentTimeMillis();
-        for(Language lang : Language.values()) {
+        for (Language lang : Language.values()) {
             lang.getName(Language.FRENCH);
         }
-        long totalTime2 = System.currentTimeMillis()-startTime2;
+        long totalTime2 = System.currentTimeMillis() - startTime2;
         assert totalTime1 > totalTime2;
         
         /* Uncomment this block to eyeball and make sure the name localization is working for all languages
@@ -171,20 +156,20 @@ public class LanguageTest {
         }
         */
     }
-    
+
     @Test
     public void testGetAllLanguageCodes() throws Exception {
         //Flush the caches, so we can test for timing
         Language.flushNameCache();
-        
+
         List<String> languageCodes = Language.getLanguageCodesForTranslation();
         assert languageCodes.size() > 0;
     }
-    
+
     @Test
     public void testGetLocalizedNameMap() throws Exception {
         Language locale = Language.ENGLISH;
-        Map<String,Language> result = Language.values(locale);
+        Map<String, Language> result = Language.values(locale);
         /*
         for(String langName : result.keySet()) {
             System.out.println(langName);

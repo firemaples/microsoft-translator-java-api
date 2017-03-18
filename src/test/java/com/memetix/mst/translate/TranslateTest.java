@@ -39,33 +39,29 @@ import static org.junit.Assert.assertNotNull;
 public class TranslateTest{
     
     public Properties p;
-    
+
+    private Translate translateService;
+
     @Rule
     public ExpectedException exception = ExpectedException.none();
-    
+
     @Before
     public void setUp() throws Exception {
         p = new Properties();
         URL url = ClassLoader.getSystemResource("META-INF/config.properties");
         p.load(url.openStream());
-        String apiKey = p.getProperty("microsoft.translator.api.key");
-        if(System.getProperty("test.api.key")!=null) {
-            apiKey = System.getProperty("test.api.key").split(",")[0];
-        }
         String subscriptionKey = p.getProperty("microsoft.translator.api.subscriptionKey");
         if(System.getProperty("test.api.key")!=null) {
             subscriptionKey = System.getProperty("test.api.key").split(",")[1];
         }
-        Translate.setKey(apiKey);
-        Translate.setSubscriptionKey(subscriptionKey);
+        translateService = new Translate(subscriptionKey);
     }
     
     @After
     public void tearDown() throws Exception {
-        Translate.setKey(null);
-        Translate.setContentType("text/plain");
-        Translate.setSubscriptionKey(null);
-        Translate.setHttpReferrer(null);
+        translateService.setContentType("text/plain");
+        translateService.setSubscriptionKey(null);
+        translateService.setHttpReferrer(null);
     }
 
     public void testSetApiKey() {
@@ -74,42 +70,41 @@ public class TranslateTest{
     
     @Test
     public void testTranslate_SetReferrer() throws Exception {
-        Translate.setHttpReferrer("http://localhost:8080");
-        assertEquals("Salut",Translate.execute("Hello", Language.ENGLISH, Language.FRENCH));
+        translateService.setHttpReferrer("http://localhost:8080");
+        assertEquals("Salut", translateService.execute("Hello", Language.ENGLISH, Language.FRENCH));
     }
     
     @Test
     public void testTranslate_NoApiKey() throws Exception {
-        Translate.setHttpReferrer("http://localhost:8080");
-        Translate.setKey(null);
-        assertEquals("Salut",Translate.execute("Hello", Language.ENGLISH, Language.FRENCH));
+        translateService.setHttpReferrer("http://localhost:8080");
+        assertEquals("Salut", translateService.execute("Hello", Language.ENGLISH, Language.FRENCH));
     }
     @Test
     public void testTranslate_NoSpace() throws Exception {
-        assertEquals("Salut",Translate.execute("Hello", Language.ENGLISH, Language.FRENCH));
+        assertEquals("Salut", translateService.execute("Hello", Language.ENGLISH, Language.FRENCH));
     }
     @Test
     public void testTranslate_EncodeSpace() throws Exception {
-        assertEquals("Bonjour, mon nom est",Translate.execute("Hello, my name is", Language.ENGLISH, Language.FRENCH));
+        assertEquals("Bonjour, mon nom est", translateService.execute("Hello, my name is", Language.ENGLISH, Language.FRENCH));
     }
     @Test
     public void testTranslate_AutoDetectOrigin() throws Exception {
-        assertEquals("Bonjour, mon nom est",Translate.execute("Hello, my name is", Language.AUTO_DETECT, Language.FRENCH));
+        assertEquals("Bonjour, mon nom est", translateService.execute("Hello, my name is", Language.AUTO_DETECT, Language.FRENCH));
     }
     
     @Test
     public void testTranslate_HTMLContentType() throws Exception {
-        Translate.setContentType("text/html");
-        assertEquals("<hello>Bonjour, mon nom est</hello>",Translate.execute("<hello>Hello, my name is</hello>", Language.AUTO_DETECT, Language.FRENCH));
+        translateService.setContentType("text/html");
+        assertEquals("<hello>Bonjour, mon nom est</hello>", translateService.execute("<hello>Hello, my name is</hello>", Language.AUTO_DETECT, Language.FRENCH));
     }
     @Test
     public void testTranslate_AutoDetectOrigin_French() throws Exception {
-        assertEquals("Salut tout le monde", Translate.execute("Hallo welt", Language.AUTO_DETECT, Language.FRENCH));
+        assertEquals("Salut tout le monde", translateService.execute("Hallo welt", Language.AUTO_DETECT, Language.FRENCH));
     }
     @Test
     public void testTranslate_ItalianToGerman_AndBack() throws Exception {
-        assertEquals("Salve, mondo", Translate.execute("Hallo welt", Language.GERMAN, Language.ITALIAN));
-        assertEquals("Hallo welt".toLowerCase(), Translate.execute("Salve, mondo", Language.ITALIAN, Language.GERMAN).toLowerCase());
+        assertEquals("Salve, mondo", translateService.execute("Hallo welt", Language.GERMAN, Language.ITALIAN));
+        assertEquals("Hallo welt".toLowerCase(), translateService.execute("Salve, mondo", Language.ITALIAN, Language.GERMAN).toLowerCase());
     }
     @Test
     public void testTranslate_EnglishToArabic_Unicode() throws Exception {
@@ -117,75 +112,58 @@ public class TranslateTest{
     }
     @Test
     public void testTranslate_EnglishToTurkish_Unicode() throws Exception {
-        assertEquals("Merhaba Dünya", Translate.execute("Hello world", Language.ENGLISH, Language.TURKISH));
-        assertEquals("Hello World", Translate.execute("Merhaba Dünya", Language.TURKISH, Language.ENGLISH));
+        assertEquals("Merhaba Dünya", translateService.execute("Hello world", Language.ENGLISH, Language.TURKISH));
+        assertEquals("Hello world", translateService.execute("Merhaba Dünya", Language.TURKISH, Language.ENGLISH));
     }
     @Test
     public void testTranslate_EnglishToHindi_Unicode() throws Exception {
-        assertEquals("हैलो वर्ल्ड", Translate.execute("Hello World", Language.ENGLISH, Language.HINDI));
-        assertEquals("Hello World", Translate.execute("हैलो वर्ल्ड", Language.HINDI, Language.ENGLISH));
+        assertEquals("हैलो वर्ल्ड", translateService.execute("Hello World", Language.ENGLISH, Language.HINDI));
+        assertEquals("Hello World", translateService.execute("हैलो वर्ल्ड", Language.HINDI, Language.ENGLISH));
     }
     @Test
     public void testTranslate_EnglishToCatalan_Unicode() throws Exception {
-        assertEquals("Hola món", Translate.execute("Hello World", Language.ENGLISH, Language.CATALAN));
-        assertEquals("Hello World", Translate.execute("Hola món", Language.CATALAN, Language.ENGLISH));
+        assertEquals("Hola món", translateService.execute("Hello World", Language.ENGLISH, Language.CATALAN));
+        assertEquals("Hello World", translateService.execute("Hola món", Language.CATALAN, Language.ENGLISH));
     }
     @Test
     public void testTranslate_RussianToSpanish_Unicode() throws Exception {
-        assertEquals("Hola mundo", Translate.execute("Привет мир", Language.RUSSIAN, Language.SPANISH));
+        assertEquals("Hola mundo", translateService.execute("Привет мир", Language.RUSSIAN, Language.SPANISH));
     }
     @Test
     public void testTranslate_EnglishToJapanese_Unicode() throws Exception {
-        assertEquals("ハローワールド", Translate.execute("Hello world", Language.ENGLISH, Language.JAPANESE));
-        assertEquals("Hello world", Translate.execute("ハローワールド", Language.AUTO_DETECT, Language.ENGLISH));
+        assertEquals("ハローワールド", translateService.execute("Hello world", Language.ENGLISH, Language.JAPANESE));
+        assertEquals("Hello world", translateService.execute("ハローワールド", Language.AUTO_DETECT, Language.ENGLISH));
     }
     @Test
     public void testTranslate_EnglishToKorean_Unicode() throws Exception {
-        assertEquals("전 세계 여러분 안녕하세요", Translate.execute("Hello world", Language.ENGLISH, Language.KOREAN));
-        assertEquals("Hello world", Translate.execute("전 세계 여러분 안녕하세요", Language.AUTO_DETECT, Language.ENGLISH));
+        assertEquals("전 세계 여러분 안녕하세요", translateService.execute("Hello world", Language.ENGLISH, Language.KOREAN));
+        assertEquals("Hello world", translateService.execute("전 세계 여러분 안녕하세요", Language.AUTO_DETECT, Language.ENGLISH));
     }
     @Test
     public void testTranslate_EnglishToKorean_DefaultToAutoDetect() throws Exception {
-        assertEquals("전 세계 여러분 안녕하세요", Translate.execute("Hello world", Language.ENGLISH, Language.KOREAN));
-        assertEquals("Hello world", Translate.execute("전 세계 여러분 안녕하세요", Language.AUTO_DETECT, Language.ENGLISH));
-        assertEquals("Hello world", Translate.execute("전 세계 여러분 안녕하세요", Language.ENGLISH));
+        assertEquals("전 세계 여러분 안녕하세요", translateService.execute("Hello world", Language.ENGLISH, Language.KOREAN));
+        assertEquals("Hello world", translateService.execute("전 세계 여러분 안녕하세요", Language.AUTO_DETECT, Language.ENGLISH));
+        assertEquals("Hello world", translateService.execute("전 세계 여러분 안녕하세요", Language.ENGLISH));
     }
     @Test
     public void testTranslate_EnglisthToHebrew_Unicode() throws Exception {
-        assertEquals("מזהה", Translate.execute("ID", Language.ENGLISH, Language.HEBREW));
+        assertEquals("מזהה", translateService.execute("ID", Language.ENGLISH, Language.HEBREW));
     }
     
     @Test
-     public void testTranslate_NoKey() throws Exception {
-        Translate.setKey(null);
-        Translate.setSubscriptionKey(null);
+     public void testTranslate_SetKeyNoSubscription() throws Exception {
+        translateService.setSubscriptionKey(null);
         exception.expect(RuntimeException.class);
-        exception.expectMessage("Must provide a Windows Azure Marketplace Client Id and Client Secret - Please see http://msdn.microsoft.com/en-us/library/hh454950.aspx for further documentation");
-        Translate.execute("ハローワールド", Language.AUTO_DETECT, Language.ENGLISH);
-    }
-    @Test
-     public void testTranslate_WrongKey() throws Exception {
-        Translate.setKey("lessthan16");
-        Translate.setSubscriptionKey(null);
-        exception.expect(RuntimeException.class);
-        exception.expectMessage("INVALID_API_KEY - Please set the API Key with your Bing Developer's Key");
-        Translate.execute("ハローワールド", Language.AUTO_DETECT, Language.ENGLISH);
-    }
-    
-    @Test
-     public void testTranslate_SetKeyNoClientIdAndSecret() throws Exception {
-        Translate.setSubscriptionKey(null);
-        exception.expect(RuntimeException.class);
-        exception.expectMessage("Must provide a Windows Azure Marketplace Client Id and Client Secret - Please see http://msdn.microsoft.com/en-us/library/hh454950.aspx for further documentation");
-        String translate = Translate.execute("ハローワールド", Language.AUTO_DETECT, Language.ENGLISH);
-        assertNotNull(translate);
+        exception.expectMessage("Must provide a Windows Azure Marketplace SubscriptionKey - Please see https://www.microsoft.com/cognitive-services/en-us/translator-api/documentation/TranslatorInfo/overview for further documentation");
+        String translated = translateService.execute("ハローワールド", Language.AUTO_DETECT, Language.ENGLISH);
+        assertNotNull(translated);
     }
     /*
     @Test
     public void testTranslate_Exception() throws Exception {
        exception.expect(Exception.class);
        //exception.expectMessage("INVALID_API_KEY - Please set the API Key with your Bing Developer's Key");
-       String result = Translate.execute("\"test\" red", Language.AUTO_DETECT, Language.ENGLISH);
+       String result = translate.execute("\"test\" red", Language.AUTO_DETECT, Language.ENGLISH);
        System.out.println(result);
    }
     */
@@ -231,7 +209,7 @@ public class TranslateTest{
 				+ "financial crisis in British history, bankers awarded themselves bonuses which were still "
 				+ "significantly larger, even in nominal terms, than those handed out five years ago in 2004, when the "
 				+ "City was entering the credit boom. Barclays and JP Morgan declined to comment.";
-		Translate.execute(largeText,
+		translateService.execute(largeText,
 				Language.ENGLISH, Language.FRENCH);
 	}
         @Ignore("Sometimes Fails, not sure why")
@@ -278,7 +256,7 @@ public class TranslateTest{
                                 + "City was entering the credit boom. Barclays and JP Morgan declined to comment.";
                                 largeText += " " + largeText;
                                 largeText += " " + largeText;
-                                Translate.execute(largeText.substring(0,10240),
+                                translateService.execute(largeText.substring(0,10240),
                                                 Language.ENGLISH, Language.FRENCH);
         }
         
@@ -329,35 +307,35 @@ public class TranslateTest{
                                 largeText += " " + largeText;
                                 exception.expect(RuntimeException.class);
                                 exception.expectMessage("TEXT_TOO_LARGE - Microsoft Translator (Translate) can handle up to 10,240 bytes per request");
-                                Translate.execute(largeText.substring(0,10242), Language.ENGLISH, Language.FRENCH);
+                                translateService.execute(largeText.substring(0,10242), Language.ENGLISH, Language.FRENCH);
                                 
         }
        @Test
         public void testTranslateArray() throws Exception {
             String[] sourceTexts = {"Hello","I would like to be translated","How are you doing today?"};
-            String[] translatedTexts = Translate.execute(sourceTexts, Language.ENGLISH, Language.FRENCH);
+            String[] translatedTexts = translateService.execute(sourceTexts, Language.ENGLISH, Language.FRENCH);
             assertEquals(3,translatedTexts.length);
             assertEquals("Salut",translatedTexts[0]);
-            assertEquals("Je voudrais être traduit",translatedTexts[1]);
-            assertEquals("Comment allez-vous faire aujourd'hui ?",translatedTexts[2]);
+            assertEquals("Je tiens à être traduit",translatedTexts[1]);
+            assertEquals("Comment allez-vous faire aujourd'hui ?",translatedTexts[2]);
         }
        @Test
        public void testTranslateArrayWithQuotes() throws Exception {
            String[] sourceTexts = {"Hello","I would like to be \"translated\"","How are you doing today?"};
-           String[] translatedTexts = Translate.execute(sourceTexts, Language.ENGLISH, Language.FRENCH);
+           String[] translatedTexts = translateService.execute(sourceTexts, Language.ENGLISH, Language.FRENCH);
            assertEquals(3,translatedTexts.length);
            assertEquals("Salut",translatedTexts[0]);
-           assertEquals("Je tiens à être « traduit »",translatedTexts[1]);
-           assertEquals("Comment allez-vous faire aujourd'hui ?",translatedTexts[2]);
+           assertEquals("Je tiens à être « traduits »",translatedTexts[1]);
+           assertEquals("Comment allez-vous faire aujourd'hui ?",translatedTexts[2]);
        }
        @Test
         public void testTranslateArray_Overloaded() throws Exception {
             String[] sourceTexts = {"Hello","I would like to be translated","How are you doing today?"};
-            String[] translatedTexts = Translate.execute(sourceTexts, Language.FRENCH);
+            String[] translatedTexts = translateService.execute(sourceTexts, Language.FRENCH);
             assertEquals(3,translatedTexts.length);
             assertEquals("Salut",translatedTexts[0]);
-            assertEquals("Je voudrais être traduit",translatedTexts[1]);
-            assertEquals("Comment allez-vous faire aujourd'hui ?",translatedTexts[2]);
+            assertEquals("Je tiens à être traduit",translatedTexts[1]);
+            assertEquals("Comment allez-vous faire aujourd'hui ?",translatedTexts[2]);
         }
        
         @Test
@@ -370,7 +348,7 @@ public class TranslateTest{
                 for(int i = 0;i<sourceTexts.length;i++)
                     sourceTexts[i] = largeText;
 
-                String[] results = Translate.execute(sourceTexts,
+                String[] results = translateService.execute(sourceTexts,
                                 Language.ENGLISH, Language.FRENCH);
 
                 assertEquals(sourceTexts.length,results.length);
@@ -388,7 +366,7 @@ public class TranslateTest{
 
                 exception.expect(RuntimeException.class);
                 exception.expectMessage("TEXT_TOO_LARGE - Microsoft Translator (Translate) can handle up to 10,240 bytes per request");
-                Translate.execute(sourceTexts, Language.ENGLISH, Language.FRENCH);
+                translateService.execute(sourceTexts, Language.ENGLISH, Language.FRENCH);
         }
         
         @Test
@@ -398,7 +376,7 @@ public class TranslateTest{
                 largeText += " " + largeText;
                 exception.expect(RuntimeException.class);
                 exception.expectMessage("TEXT_TOO_LARGE - Microsoft Translator (Translate) can handle up to 10,240 bytes per request");
-                Translate.execute(largeText, Language.AUTO_DETECT, Language.ENGLISH);
+                translateService.execute(largeText, Language.AUTO_DETECT, Language.ENGLISH);
                                 
         }
        
