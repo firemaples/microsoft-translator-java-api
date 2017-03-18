@@ -28,9 +28,9 @@ Use Maven, Gradle or Download the latest [JAR with dependencies](https://github.
     public class Main {
       public static void main(String[] args) throws Exception {
         // Set your Azure Portal Subscription Key - See https://www.microsoft.com/cognitive-services/en-us/translator-api/documentation/TranslatorInfo/overview
-        Translate translator = new Translate(/* Enter your Windows Azure Subscription Key here */);
+        Translate.setSubscriptionKey(/* Enter your Windows Azure Subscription Key here */);
 
-        String translatedText = translator.execute("Bonjour le monde", Language.FRENCH, Language.ENGLISH);
+        String translatedText = Translate.execute("Bonjour le monde", Language.FRENCH, Language.ENGLISH);
 
         System.out.println(translatedText);
       }
@@ -53,7 +53,7 @@ Maven
     <dependency>
       <groupId>io.github.firemaples</groupId>
       <artifactId>microsoft-translator-java-api</artifactId>
-      <version>0.8.1</version>
+      <version>0.8.2</version>
       <type>pom</type>
     </dependency>
 
@@ -69,7 +69,7 @@ Gradle
     ...
 
     dependencies {
-        compile 'io.github.firemaples:microsoft-translator-java-api:0.8.1'
+        compile 'io.github.firemaples:microsoft-translator-java-api:0.8.2'
     }
 
 Build JAR
