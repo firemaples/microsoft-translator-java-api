@@ -1,5 +1,21 @@
 apply plugin: 'java'
 
+sourceSets {
+    main {
+        java {
+            srcDir '../src/main/java'
+        }
+//        output.classesDir = "$workDir/client/program"
+    }
+    test {
+        java {
+            srcDir '../src/test/java'
+        }
+//        output.classesDir = "$workDir/client/tests"
+//        output.resourcesDir = "$workDir/client/tests"
+    }
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.11'
