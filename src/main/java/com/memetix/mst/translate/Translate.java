@@ -112,7 +112,6 @@ public final class Translate extends MicrosoftTranslatorAPI {
      * execute(texts[],fromLang,toLang)
      * 
      * @param texts The Strings Array to translate.
-     * @param from The language code to translate from.
      * @param to The language code to translate to.
      * @return The translated Strings Array[].
      * @throws Exception on error.

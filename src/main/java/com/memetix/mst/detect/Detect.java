@@ -59,7 +59,6 @@ public final class Detect extends MicrosoftTranslatorAPI {
      /**
 	 * Detects the language of all supplied Strings in array.
 	 * 
-	 * @param text The Strings to detect the language of.
 	 * @return A String array containing the detected languages
 	 * @throws Exception on error.
 	 */
