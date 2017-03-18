@@ -32,7 +32,7 @@ import java.net.URLEncoder;
  * <p>
  * Uses the AJAX Interface V2 - see: http://msdn.microsoft.com/en-us/library/ff512405.aspx
  *
- * @author Jonathan Griggs <jonathan.griggs at gmail.com>
+ * @author Jonathan Griggs [jonathan.griggs@gmail.com]
  */
 public final class Speak extends MicrosoftTranslatorAPI {
     private static final String SERVICE_URL = "http://api.microsofttranslator.com/V2/Ajax.svc/Speak?";

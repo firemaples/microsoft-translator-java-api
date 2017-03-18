@@ -1,7 +1,7 @@
 /*
  * microsoft-translator-java-api
  * 
- * Copyright 2012 Jonathan Griggs <jonathan.griggs at gmail.com>.
+ * Copyright 2012 Jonathan Griggs [jonathan.griggs at gmail.com].
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import java.net.URLEncoder;
  * <p>
  * Uses the AJAX Interface V2 - see: http://msdn.microsoft.com/en-us/library/ff512406.aspx
  *
- * @author Jonathan Griggs <jonathan.griggs at gmail.com>
+ * @author Jonathan Griggs [jonathan.griggs at gmail.com]
  */
 public final class Translate extends MicrosoftTranslatorAPI {
 

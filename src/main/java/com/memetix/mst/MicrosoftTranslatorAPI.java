@@ -1,7 +1,7 @@
 /*
  * microsoft-translator-java-api
  * 
- * Copyright 2012 Jonathan Griggs <jonathan.griggs at gmail.com>.
+ * Copyright 2012 Jonathan Griggs [jonathan.griggs at gmail.com].
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -95,7 +95,10 @@ public abstract class MicrosoftTranslatorAPI {
     /**
      * Gets the OAuth access token.
      *
+     * @param referrer        Referrer string
      * @param subscriptionKey The Subscription Key
+     * @return Token
+     * @throws Exception Throws http exception
      */
     public static String getToken(final String referrer, final String subscriptionKey) throws Exception {
 //       final String params = "grant_type=client_credentials&scope=http://api.microsofttranslator.com"
@@ -131,7 +134,7 @@ public abstract class MicrosoftTranslatorAPI {
         }
     }
 
-    public void resetToken(){
+    public void resetToken() {
         token = null;
         tokenCacheExpiration = 0;
     }
@@ -196,7 +199,8 @@ public abstract class MicrosoftTranslatorAPI {
      * retrieves the String value of the specified JSON Property, and returns the result of
      * the request as a String Array.
      *
-     * @param url The URL to query for a String response.
+     * @param url          The URL to query for a String response.
+     * @param jsonProperty Json property
      * @return The translated String[].
      * @throws Exception on error.
      */

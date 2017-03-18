@@ -1,7 +1,7 @@
 /*
  * microsoft-translator-java-api
  * 
- * Copyright 2012 Jonathan Griggs <jonathan.griggs at gmail.com>.
+ * Copyright 2012 Jonathan Griggs [jonathan.griggs at gmail.com].
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import java.net.URLEncoder;
  * <p>
  * Uses the AJAX Interface V2 - see: http://msdn.microsoft.com/en-us/library/ff512396.aspx
  *
- * @author Jonathan Griggs <jonathan.griggs at gmail.com>
+ * @author Jonathan Griggs [jonathan.griggs at gmail.com]
  */
 public final class Detect extends MicrosoftTranslatorAPI {
     private static final String SERVICE_URL = "http://api.microsofttranslator.com/V2/Ajax.svc/Detect?";
@@ -60,7 +60,6 @@ public final class Detect extends MicrosoftTranslatorAPI {
     /**
      * Detects the language of all supplied Strings in array.
      *
-     * @param text The Strings to detect the language of.
      * @return A String array containing the detected languages
      * @throws Exception on error.
      */

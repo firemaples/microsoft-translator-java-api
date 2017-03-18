@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.memetix</groupId>
+  <groupId>io.github.firemaples</groupId>
   <artifactId>microsoft-translator-java-api</artifactId>
-  <version>0.7-SNAPSHOT</version>
+  <version>0.8.1</version>
   <packaging>jar</packaging>
 
   <name>microsoft-translator-java-api</name>
   <description>A Java wrapper for the Microsoft Translator API</description>
-  <url>http://github.com/boatmeme/microsoft-translator-java-api</url>
+  <url>https://github.com/firemaples/microsoft-translator-java-api</url>
   
   <parent>
     <groupId>org.sonatype.oss</groupId>
@@ -32,28 +32,28 @@
 
   <developers>
         <developer>
-            <id>boatmeme</id>
-            <name>Jonathan Griggs</name>
-            <email>jonathan.griggs@gmail.com</email>
-            <url>http://memetix.com</url>
+            <id>firemaples</id>
+            <name>Louis Chen</name>
+            <email>firemaples@gmail.com</email>
+            <url>https://github.com/firemaples</url>
             <roles>
                 <role>lead</role>
                 <role>architect</role>
                 <role>developer</role>
             </roles>
-            <timezone>-7</timezone>
+            <timezone>+8</timezone>
         </developer>
   </developers>
   
   <scm>
-    <connection>scm:git:git@github.com:boatmeme/${project.artifactId}.git</connection>
-    <url>scm:git:git@github.com:boatmeme/${project.artifactId}.git</url>
-    <developerConnection>scm:git:git@github.com:boatmeme/${project.artifactId}.git</developerConnection>
+    <connection>scm:git:git@github.com:firemaples/${project.artifactId}.git</connection>
+    <url>scm:git:git@github.com:firemaples/${project.artifactId}.git</url>
+    <developerConnection>scm:git:git@github.com:firemaples/${project.artifactId}.git</developerConnection>
   </scm>
   
   <issueManagement>
     <system>GitHub</system>
-    <url>https://github.com/boatmeme/microsoft-translator-java-api/issues</url>
+    <url>https://github.com/firemaples/microsoft-translator-java-api/issues</url>
   </issueManagement>
   
     <mailingLists>
