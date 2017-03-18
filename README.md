@@ -28,9 +28,9 @@ Use Maven, Gradle or Download the latest [JAR with dependencies](https://github.
     public class Main {
       public static void main(String[] args) throws Exception {
         // Set your Azure Portal Subscription Key - See https://www.microsoft.com/cognitive-services/en-us/translator-api/documentation/TranslatorInfo/overview
-        Translate.setSubscriptionKey(/* Enter your Windows Azure Subscription Key here */);
+        Translate translator = new Translate(/* Enter your Windows Azure Subscription Key here */);
 
-        String translatedText = Translate.execute("Bonjour le monde", Language.FRENCH, Language.ENGLISH);
+        String translatedText = translator.execute("Bonjour le monde", Language.FRENCH, Language.ENGLISH);
 
         System.out.println(translatedText);
       }
