@@ -11,6 +11,9 @@ sourceSets {
         java {
             srcDir '../src/test/java'
         }
+        resources {
+            srcDir '../src/test/resources'
+        }
 //        output.classesDir = "$workDir/client/tests"
 //        output.resourcesDir = "$workDir/client/tests"
     }
@@ -18,7 +21,7 @@ sourceSets {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.11'
+    testCompile 'junit:junit:4.12'
     compile 'com.googlecode.json-simple:json-simple:1.1'
 }
 

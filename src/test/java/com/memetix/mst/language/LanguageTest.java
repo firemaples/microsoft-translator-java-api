@@ -17,19 +17,20 @@
  */
 package com.memetix.mst.language;
 
-import static org.junit.Assert.*;
-
-import com.memetix.mst.language.Language;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import com.memetix.mst.translate.Translate;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  *
@@ -51,17 +52,12 @@ public class LanguageTest {
         if(System.getProperty("test.api.key")!=null) {
             apiKey = System.getProperty("test.api.key").split(",")[0];
         }
-        String clientId = p.getProperty("microsoft.translator.api.clientId");
+        String subscriptionKey = p.getProperty("microsoft.translator.api.subscriptionKey");
         if(System.getProperty("test.api.key")!=null) {
-            clientId = System.getProperty("test.api.key").split(",")[1];
+            subscriptionKey = System.getProperty("test.api.key").split(",")[1];
         }
-        String clientSecret = p.getProperty("microsoft.translator.api.clientSecret");
-        if(System.getProperty("test.api.key")!=null) {
-            clientSecret = System.getProperty("test.api.key").split(",")[2];
-        }
-        Language.setClientId(clientId);
-        Language.setClientSecret(clientSecret);
-        Language.setKey(apiKey);
+        Translate.setKey(apiKey);
+        Translate.setSubscriptionKey(subscriptionKey);
     }
     
     @After
@@ -103,7 +99,7 @@ public class LanguageTest {
     @Test
     public void testGetLanguage_NoKey() throws Exception {
         Language.setKey(null);
-        Language.setClientId(null);
+        Language.setSubscriptionKey(null);
         Language locale = Language.PERSIAN;
         
         exception.expect(RuntimeException.class);

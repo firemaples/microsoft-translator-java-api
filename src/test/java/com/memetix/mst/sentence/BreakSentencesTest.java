@@ -17,10 +17,8 @@
  */
 package com.memetix.mst.sentence;
 
-import static org.junit.Assert.*;
-
-import java.net.URL;
-import java.util.Properties;
+import com.memetix.mst.language.Language;
+import com.memetix.mst.translate.Translate;
 
 import org.junit.After;
 import org.junit.Before;
@@ -28,36 +26,34 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import com.memetix.mst.language.Language;
+import java.net.URL;
+import java.util.Properties;
+
+import static org.junit.Assert.assertEquals;
 
 public class BreakSentencesTest {
 	Properties p;
-	    
+
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
-	    
-	
+
+
 	@Before
-        public void setUp() throws Exception {
-            p = new Properties();
-            URL url = ClassLoader.getSystemResource("META-INF/config.properties");
-            p.load(url.openStream());
-            String apiKey = p.getProperty("microsoft.translator.api.key");
-            if(System.getProperty("test.api.key")!=null) {
-                apiKey = System.getProperty("test.api.key").split(",")[0];
-            }
-            String clientId = p.getProperty("microsoft.translator.api.clientId");
-            if(System.getProperty("test.api.key")!=null) {
-                clientId = System.getProperty("test.api.key").split(",")[1];
-            }
-            String clientSecret = p.getProperty("microsoft.translator.api.clientSecret");
-            if(System.getProperty("test.api.key")!=null) {
-                clientSecret = System.getProperty("test.api.key").split(",")[2];
-            }
-            BreakSentences.setKey(apiKey);
-            BreakSentences.setClientSecret(clientSecret);
-            BreakSentences.setClientId(clientId);
+    public void setUp() throws Exception {
+        p = new Properties();
+        URL url = ClassLoader.getSystemResource("META-INF/config.properties");
+        p.load(url.openStream());
+        String apiKey = p.getProperty("microsoft.translator.api.key");
+        if(System.getProperty("test.api.key")!=null) {
+            apiKey = System.getProperty("test.api.key").split(",")[0];
         }
+        String subscriptionKey = p.getProperty("microsoft.translator.api.subscriptionKey");
+        if(System.getProperty("test.api.key")!=null) {
+            subscriptionKey = System.getProperty("test.api.key").split(",")[1];
+        }
+        Translate.setKey(apiKey);
+        Translate.setSubscriptionKey(subscriptionKey);
+    }
 
 	@After
 	public void tearDown() throws Exception {
@@ -71,7 +67,7 @@ public class BreakSentencesTest {
 		assertEquals(20, results[1].intValue());
 		assertEquals(41, results[2].intValue());
 	}
-	
+
 	@Test
 	public void testBreakSentences_AutoDetect() throws Exception {
 		exception.expect(RuntimeException.class);
@@ -82,7 +78,7 @@ public class BreakSentencesTest {
 	@Test
         public void testBreakSentences_NoKey() throws Exception {
             BreakSentences.setKey(null);
-            BreakSentences.setClientId(null);
+            BreakSentences.setSubscriptionKey(null);
             exception.expect(RuntimeException.class);
             exception.expectMessage("Must provide a Windows Azure Marketplace Client Id and Client Secret - Please see http://msdn.microsoft.com/en-us/library/hh454950.aspx for further documentation");
             BreakSentences.execute("This is a sentence. That is a sentence. There are hopefully 3 sentences detected.",Language.ENGLISH);
@@ -94,7 +90,7 @@ public class BreakSentencesTest {
             exception.expectMessage("INVALID_API_KEY - Please set the API Key with your Bing Developer's Key");
             BreakSentences.execute("This is a sentence. That is a sentence. There are hopefully 3 sentences detected.",Language.ENGLISH);
         }
-	
+
 	@Test
     public void testBreakSentencesEnglish_Large() throws Exception {
         Integer[] results = BreakSentences.execute("Figures from the Office for National Statistics (ONS) show that between December and April, "
@@ -140,7 +136,7 @@ public class BreakSentencesTest {
 				,Language.ENGLISH);
         		assertEquals(28,results.length);
     }
-        
+
         @Test
     public void testBreakSentencesEnglish_LargeNoKey() throws Exception {
         BreakSentences.setKey(null);
@@ -187,7 +183,7 @@ public class BreakSentencesTest {
 				,Language.ENGLISH);
         		assertEquals(28,results.length);
     }
-	
+
 	@Test
     public void testLargeTooLarge() throws Exception {
                 String largeText = "Figures from the Office for National Statistics (ONS) show that between December and April, "
@@ -235,6 +231,6 @@ public class BreakSentencesTest {
                             exception.expect(RuntimeException.class);
                             exception.expectMessage("TEXT_TOO_LARGE - Microsoft Translator (BreakSentences) can handle up to 10,240 bytes per request");
                             BreakSentences.execute(largeText.substring(0,10242),Language.ENGLISH);
-                            
+
     }
 }

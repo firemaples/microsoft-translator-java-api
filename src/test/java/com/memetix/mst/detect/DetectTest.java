@@ -17,17 +17,19 @@
  */
 package com.memetix.mst.detect;
 
-import static org.junit.Assert.*;
-
 import com.memetix.mst.language.Language;
-import java.net.URL;
-import java.util.Properties;
+import com.memetix.mst.translate.Translate;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import java.net.URL;
+import java.util.Properties;
+
+import static org.junit.Assert.assertEquals;
 /**
  * Unit Tests for the Detect class
  * @author Jonathan Griggs <jonathan.griggs at gmail.com>
@@ -47,17 +49,12 @@ public class DetectTest {
         if(System.getProperty("test.api.key")!=null) {
             apiKey = System.getProperty("test.api.key").split(",")[0];
         }
-        String clientId = p.getProperty("microsoft.translator.api.clientId");
+        String subscriptionKey = p.getProperty("microsoft.translator.api.subscriptionKey");
         if(System.getProperty("test.api.key")!=null) {
-            clientId = System.getProperty("test.api.key").split(",")[1];
+            subscriptionKey = System.getProperty("test.api.key").split(",")[1];
         }
-        String clientSecret = p.getProperty("microsoft.translator.api.clientSecret");
-        if(System.getProperty("test.api.key")!=null) {
-            clientSecret = System.getProperty("test.api.key").split(",")[2];
-        }
-        Detect.setClientId(clientId);
-        Detect.setClientSecret(clientSecret);
-        Detect.setKey(apiKey);
+        Translate.setKey(apiKey);
+        Translate.setSubscriptionKey(subscriptionKey);
     }
     
     @After
@@ -102,7 +99,7 @@ public class DetectTest {
     @Test
     public void testDetect_WrongKey() throws Exception {
         Detect.setKey("wrong_key");
-        Detect.setClientId(null);
+        Detect.setSubscriptionKey(null);
         exception.expect(RuntimeException.class);
         exception.expectMessage("INVALID_API_KEY - Please set the API Key with your Bing Developer's Key");
         Detect.execute("전 세계 여러분 안녕하세요");
@@ -111,7 +108,7 @@ public class DetectTest {
     @Test
     public void testDetect_NoKey() throws Exception {
         Detect.setKey(null);
-        Detect.setClientId(null);
+        Detect.setSubscriptionKey(null);
         exception.expect(RuntimeException.class);
         exception.expectMessage("Must provide a Windows Azure Marketplace Client Id and Client Secret - Please see http://msdn.microsoft.com/en-us/library/hh454950.aspx for further documentation");
         Detect.execute("전 세계 여러분 안녕하세요");
@@ -119,7 +116,7 @@ public class DetectTest {
     @Test
     public void testDetectArray_NoKey() throws Exception {
         Detect.setKey(null);
-        Detect.setClientId(null);
+        Detect.setSubscriptionKey(null);
         String[] texts = {"Hello world!"};
         exception.expect(RuntimeException.class);
         exception.expectMessage("Must provide a Windows Azure Marketplace Client Id and Client Secret - Please see http://msdn.microsoft.com/en-us/library/hh454950.aspx for further documentation");
@@ -129,7 +126,7 @@ public class DetectTest {
     @Test
     public void testDetectArray_WrongKey() throws Exception {
         Detect.setKey("wrong_key");
-        Detect.setClientId(null);
+        Detect.setSubscriptionKey(null);
         String[] texts = {"Hello world!"};
         exception.expect(RuntimeException.class);
         exception.expectMessage("INVALID_API_KEY - Please set the API Key with your Bing Developer's Key");

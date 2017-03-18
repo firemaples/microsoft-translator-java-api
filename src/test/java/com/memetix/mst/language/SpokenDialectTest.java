@@ -17,18 +17,18 @@
  */
 package com.memetix.mst.language;
 
-import static org.junit.Assert.*;
-
-import com.memetix.mst.language.SpokenDialect;
-import com.memetix.mst.language.Language;
-import java.net.URL;
-import java.util.Properties;
+import com.memetix.mst.translate.Translate;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import java.net.URL;
+import java.util.Properties;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  *
@@ -49,17 +49,12 @@ public class SpokenDialectTest {
         if(System.getProperty("test.api.key")!=null) {
             apiKey = System.getProperty("test.api.key").split(",")[0];
         }
-        String clientId = p.getProperty("microsoft.translator.api.clientId");
+        String subscriptionKey = p.getProperty("microsoft.translator.api.subscriptionKey");
         if(System.getProperty("test.api.key")!=null) {
-            clientId = System.getProperty("test.api.key").split(",")[1];
+            subscriptionKey = System.getProperty("test.api.key").split(",")[1];
         }
-        String clientSecret = p.getProperty("microsoft.translator.api.clientSecret");
-        if(System.getProperty("test.api.key")!=null) {
-            clientSecret = System.getProperty("test.api.key").split(",")[2];
-        }
-        SpokenDialect.setKey(apiKey);
-        SpokenDialect.setClientId(clientId);
-        SpokenDialect.setClientSecret(clientSecret);
+        Translate.setKey(apiKey);
+        Translate.setSubscriptionKey(subscriptionKey);
     }
     
     @After
@@ -71,7 +66,7 @@ public class SpokenDialectTest {
     public void testGetSpokenDialect_NoKey() throws Exception {
         SpokenDialect.flushNameCache();
         SpokenDialect.setKey(null);
-        SpokenDialect.setClientId(null);
+        SpokenDialect.setSubscriptionKey(null);
         Language locale = Language.ENGLISH;
         
         exception.expect(RuntimeException.class);

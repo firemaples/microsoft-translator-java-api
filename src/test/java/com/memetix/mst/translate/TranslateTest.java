@@ -17,11 +17,7 @@
  */
 package com.memetix.mst.translate;
 
-import static org.junit.Assert.*;
-
 import com.memetix.mst.language.Language;
-import java.net.URL;
-import java.util.Properties;
 
 import org.junit.After;
 import org.junit.Before;
@@ -29,6 +25,12 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import java.net.URL;
+import java.util.Properties;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  *
@@ -50,25 +52,19 @@ public class TranslateTest{
         if(System.getProperty("test.api.key")!=null) {
             apiKey = System.getProperty("test.api.key").split(",")[0];
         }
-        String clientId = p.getProperty("microsoft.translator.api.clientId");
+        String subscriptionKey = p.getProperty("microsoft.translator.api.subscriptionKey");
         if(System.getProperty("test.api.key")!=null) {
-            clientId = System.getProperty("test.api.key").split(",")[1];
-        }
-        String clientSecret = p.getProperty("microsoft.translator.api.clientSecret");
-        if(System.getProperty("test.api.key")!=null) {
-            clientSecret = System.getProperty("test.api.key").split(",")[2];
+            subscriptionKey = System.getProperty("test.api.key").split(",")[1];
         }
         Translate.setKey(apiKey);
-        Translate.setClientSecret(clientSecret);
-        Translate.setClientId(clientId);
+        Translate.setSubscriptionKey(subscriptionKey);
     }
     
     @After
     public void tearDown() throws Exception {
         Translate.setKey(null);
         Translate.setContentType("text/plain");
-        Translate.setClientId(null);
-        Translate.setClientSecret(null);
+        Translate.setSubscriptionKey(null);
         Translate.setHttpReferrer(null);
     }
 
@@ -162,8 +158,7 @@ public class TranslateTest{
     @Test
      public void testTranslate_NoKey() throws Exception {
         Translate.setKey(null);
-        Translate.setClientId(null);
-        Translate.setClientSecret(null);
+        Translate.setSubscriptionKey(null);
         exception.expect(RuntimeException.class);
         exception.expectMessage("Must provide a Windows Azure Marketplace Client Id and Client Secret - Please see http://msdn.microsoft.com/en-us/library/hh454950.aspx for further documentation");
         Translate.execute("ハローワールド", Language.AUTO_DETECT, Language.ENGLISH);
@@ -171,8 +166,7 @@ public class TranslateTest{
     @Test
      public void testTranslate_WrongKey() throws Exception {
         Translate.setKey("lessthan16");
-        Translate.setClientId(null);
-        Translate.setClientSecret(null);
+        Translate.setSubscriptionKey(null);
         exception.expect(RuntimeException.class);
         exception.expectMessage("INVALID_API_KEY - Please set the API Key with your Bing Developer's Key");
         Translate.execute("ハローワールド", Language.AUTO_DETECT, Language.ENGLISH);
@@ -180,8 +174,7 @@ public class TranslateTest{
     
     @Test
      public void testTranslate_SetKeyNoClientIdAndSecret() throws Exception {
-        Translate.setClientId(null);
-        Translate.setClientSecret(null);
+        Translate.setSubscriptionKey(null);
         exception.expect(RuntimeException.class);
         exception.expectMessage("Must provide a Windows Azure Marketplace Client Id and Client Secret - Please see http://msdn.microsoft.com/en-us/library/hh454950.aspx for further documentation");
         String translate = Translate.execute("ハローワールド", Language.AUTO_DETECT, Language.ENGLISH);
