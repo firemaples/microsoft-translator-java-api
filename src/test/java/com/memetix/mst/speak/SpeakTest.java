@@ -36,8 +36,6 @@ import static org.junit.Assert.assertEquals;
 public class SpeakTest {
     Properties p;
 
-    private Speak speakService;
-
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
@@ -50,7 +48,7 @@ public class SpeakTest {
         if (System.getProperty("test.api.key") != null) {
             subscriptionKey = System.getProperty("test.api.key").split(",")[1];
         }
-        speakService = new Speak(subscriptionKey);
+        Speak.setSubscriptionKey(subscriptionKey);
     }
 
     @After
@@ -59,27 +57,27 @@ public class SpeakTest {
     }
 
     /**
-     * Test of execute method, of class speakService.
+     * Test of execute method, of class Speak.
      */
     @Test
     public void testGetSpeakUrl_NoKey() throws Exception {
-        speakService.setSubscriptionKey(null);
+        Speak.setSubscriptionKey(null);
         exception.expect(RuntimeException.class);
         exception.expectMessage("Must provide a Windows Azure Marketplace SubscriptionKey - Please see https://www.microsoft.com/cognitive-services/en-us/translator-api/documentation/TranslatorInfo/overview for further documentation");
         String text = "Hello World!";
         SpokenDialect language = SpokenDialect.ENGLISH_INDIA;
-        speakService.execute(text, language);
+        Speak.execute(text, language);
     }
 
     /**
-     * Test of execute method, of class speakService.
+     * Test of execute method, of class Speak.
      */
     @Test
     public void testGetSpeakUrl() throws Exception {
         String text = "Hello World!";
         SpokenDialect language = SpokenDialect.ENGLISH_INDIA;
         String expResult = "http://api.microsofttranslator.com/V2/http.svc/Speak";
-        String result = speakService.execute(text, language);
+        String result = Speak.execute(text, language);
         assertEquals(true, result.contains(expResult));
     }
 
@@ -88,19 +86,19 @@ public class SpeakTest {
         String text = "Hello World!";
         SpokenDialect language = SpokenDialect.ENGLISH_INDIA;
         String expResult = "http://api.microsofttranslator.com/V2/http.svc/Speak";
-        String result = speakService.execute(text, language);
+        String result = Speak.execute(text, language);
         assertEquals(true, result.contains(expResult));
     }
 
     /**
-     * Test of execute method, of class speakService.
+     * Test of execute method, of class Speak.
      */
     @Test
     public void testGetSpeakUrlUk() throws Exception {
         String text = "Hello World!";
         SpokenDialect language = SpokenDialect.ENGLISH_UNITED_KINGDOM;
         String expResult = "http://api.microsofttranslator.com/V2/http.svc/Speak";
-        String result = speakService.execute(text, language);
+        String result = Speak.execute(text, language);
         assertEquals(true, result.contains(expResult));
     }
 
@@ -150,7 +148,7 @@ public class SpeakTest {
         largeText += " " + largeText;
         exception.expect(RuntimeException.class);
         exception.expectMessage("TEXT_TOO_LARGE - Microsoft Translator (Speak) can handle up to 2000 bytes per request");
-        speakService.execute(largeText.substring(0, 10242), SpokenDialect.ENGLISH_INDIA);
+        Speak.execute(largeText.substring(0, 10242), SpokenDialect.ENGLISH_INDIA);
 
     }
 }

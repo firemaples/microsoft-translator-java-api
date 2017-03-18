@@ -93,7 +93,7 @@ public class LanguageTest {
 //    @Ignore("Should be fixed")
     @Test
     public void testGetLanguage_WrongKey() throws Exception {
-        Language.reset();
+        Language.resetToken();
         Language.setSubscriptionKey("wrong_key");
         Language locale = Language.PERSIAN;
 

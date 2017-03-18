@@ -38,8 +38,6 @@ import static org.junit.Assert.assertEquals;
 public class DetectTest {
     Properties p;
 
-    Detect detectService;
-
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
@@ -48,15 +46,11 @@ public class DetectTest {
         p = new Properties();
         URL url = ClassLoader.getSystemResource("META-INF/config.properties");
         p.load(url.openStream());
-        String apiKey = p.getProperty("microsoft.translator.api.key");
-        if (System.getProperty("test.api.key") != null) {
-            apiKey = System.getProperty("test.api.key").split(",")[0];
-        }
         String subscriptionKey = p.getProperty("microsoft.translator.api.subscriptionKey");
         if (System.getProperty("test.api.key") != null) {
             subscriptionKey = System.getProperty("test.api.key").split(",")[1];
         }
-        detectService = new Detect(subscriptionKey);
+        Detect.setSubscriptionKey(subscriptionKey);
     }
 
     @After
@@ -66,23 +60,23 @@ public class DetectTest {
 
     @Test
     public void testDetectEnglish() throws Exception {
-        assertEquals(Language.ENGLISH, detectService.execute("Hello world!"));
+        assertEquals(Language.ENGLISH, Detect.execute("Hello world!"));
     }
 
     @Test
     public void testDetectFrench() throws Exception {
-        assertEquals(Language.FRENCH, detectService.execute("Salut tout le monde"));
+        assertEquals(Language.FRENCH, Detect.execute("Salut tout le monde"));
     }
 
     @Test
     public void testDetectKorean() throws Exception {
-        assertEquals(Language.KOREAN, detectService.execute("전 세계 여러분 안녕하세요"));
+        assertEquals(Language.KOREAN, Detect.execute("전 세계 여러분 안녕하세요"));
     }
 
     @Test
     public void testDetectArray() throws Exception {
         String[] texts = {"Hello world!", "Salut tout le monde", "전 세계 여러분 안녕하세요"};
-        String[] detections = detectService.execute(texts);
+        String[] detections = Detect.execute(texts);
         assertEquals(Language.ENGLISH.toString(), detections[0]);
         assertEquals(Language.FRENCH.toString(), detections[1]);
         assertEquals(Language.KOREAN.toString(), detections[2]);
@@ -91,48 +85,49 @@ public class DetectTest {
     @Test
     public void testDetectArraySingle() throws Exception {
         String[] texts = {"Hello world!"};
-        String[] detections = detectService.execute(texts);
+        String[] detections = Detect.execute(texts);
         assertEquals(Language.ENGLISH.toString(), detections[0]);
     }
 
 
     @Test
     public void testDetect_WrongKey() throws Exception {
-        detectService.setSubscriptionKey("wrong_key");
+        Detect.resetToken();
+        Detect.setSubscriptionKey("wrong_key");
         exception.expect(Exception.class);
         exception.expectMessage("[microsoft-translator-api] Error retrieving translation : Server returned HTTP response code: 401 for URL: https://api.cognitive.microsoft.com/sts/v1.0/issueToken");
-        detectService.execute("전 세계 여러분 안녕하세요");
+        Detect.execute("전 세계 여러분 안녕하세요");
     }
 
     @Test
     public void testDetect_NoKey() throws Exception {
-        detectService.setSubscriptionKey(null);
+        Detect.setSubscriptionKey(null);
         exception.expect(RuntimeException.class);
         exception.expectMessage("Must provide a Windows Azure Marketplace SubscriptionKey - Please see https://www.microsoft.com/cognitive-services/en-us/translator-api/documentation/TranslatorInfo/overview for further documentation");
-        detectService.execute("전 세계 여러분 안녕하세요");
+        Detect.execute("전 세계 여러분 안녕하세요");
     }
 
     @Test
     public void testDetectArray_NoKey() throws Exception {
-        detectService.setSubscriptionKey(null);
+        Detect.setSubscriptionKey(null);
         String[] texts = {"Hello world!"};
         exception.expect(RuntimeException.class);
         exception.expectMessage("Must provide a Windows Azure Marketplace SubscriptionKey - Please see https://www.microsoft.com/cognitive-services/en-us/translator-api/documentation/TranslatorInfo/overview for further documentation");
-        detectService.execute(texts);
+        Detect.execute(texts);
     }
 
     @Test
     public void testDetectArray_WrongKey() throws Exception {
-        detectService.setSubscriptionKey("wrong_key");
+        Detect.setSubscriptionKey("wrong_key");
         String[] texts = {"Hello world!"};
         exception.expect(Exception.class);
         exception.expectMessage("[microsoft-translator-api] Error retrieving translation.");
-        detectService.execute(texts);
+        Detect.execute(texts);
     }
 
     @Test
     public void testDetectEnglish_Large() throws Exception {
-        assertEquals(Language.ENGLISH, detectService.execute("Figures from the Office for National Statistics (ONS) show that between December and April, "
+        assertEquals(Language.ENGLISH, Detect.execute("Figures from the Office for National Statistics (ONS) show that between December and April, "
                 + "the five-month period typically regarded as peak bonus season, those working in the financial "
                 + "intermediation sector received bonuses worth ¬¨¬£7.6bn. The figure is more than 40pc lower than last"
                 + "year's total of ¬¨¬£13.2bn, but the fact that it came during a period where the banking system owed its"
@@ -221,7 +216,7 @@ public class DetectTest {
         largeText += " " + largeText;
         exception.expect(RuntimeException.class);
         exception.expectMessage("TEXT_TOO_LARGE - Microsoft Translator (Detect) can handle up to 10,240 bytes per request");
-        detectService.execute(largeText.substring(0, 10242));
+        Detect.execute(largeText.substring(0, 10242));
 
     }
 }

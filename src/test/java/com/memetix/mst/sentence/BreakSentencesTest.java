@@ -33,8 +33,6 @@ import static org.junit.Assert.assertEquals;
 public class BreakSentencesTest {
     Properties p;
 
-    private BreakSentences breakSentencesService;
-
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
@@ -49,7 +47,7 @@ public class BreakSentencesTest {
             subscriptionKey = System.getProperty("test.api.key").split(",")[1];
         }
 
-        breakSentencesService = new BreakSentences(subscriptionKey);
+        BreakSentences.setSubscriptionKey(subscriptionKey);
     }
 
     @After
@@ -58,7 +56,7 @@ public class BreakSentencesTest {
 
     @Test
     public void testBreakSentences() throws Exception {
-        Integer[] results = breakSentencesService.execute("This is a sentence. That is a sentence. There are hopefully 3 sentences detected.", Language.ENGLISH);
+        Integer[] results = BreakSentences.execute("This is a sentence. That is a sentence. There are hopefully 3 sentences detected.", Language.ENGLISH);
         assertEquals(3, results.length);
         assertEquals(20, results[0].intValue());
         assertEquals(20, results[1].intValue());
@@ -69,28 +67,29 @@ public class BreakSentencesTest {
     public void testBreakSentences_AutoDetect() throws Exception {
         exception.expect(RuntimeException.class);
         exception.expectMessage("BreakSentences does not support AUTO_DETECT Langauge. Please specify the origin language");
-        breakSentencesService.execute("This is a sentence. That is a sentence. There are hopefully 3 sentences detected.", Language.AUTO_DETECT);
+        BreakSentences.execute("This is a sentence. That is a sentence. There are hopefully 3 sentences detected.", Language.AUTO_DETECT);
     }
 
     @Test
     public void testBreakSentences_NoKey() throws Exception {
-        breakSentencesService.setSubscriptionKey(null);
+        BreakSentences.setSubscriptionKey(null);
         exception.expect(RuntimeException.class);
         exception.expectMessage("Must provide a Windows Azure Marketplace SubscriptionKey - Please see https://www.microsoft.com/cognitive-services/en-us/translator-api/documentation/TranslatorInfo/overview for further documentation");
-        breakSentencesService.execute("This is a sentence. That is a sentence. There are hopefully 3 sentences detected.", Language.ENGLISH);
+        BreakSentences.execute("This is a sentence. That is a sentence. There are hopefully 3 sentences detected.", Language.ENGLISH);
     }
 
     @Test
     public void testBreakSentences_WrongKey() throws Exception {
-        breakSentencesService.setSubscriptionKey("Wrong");
+        BreakSentences.resetToken();
+        BreakSentences.setSubscriptionKey("Wrong");
         exception.expect(Exception.class);
         exception.expectMessage("Server returned HTTP response code: 401");
-        breakSentencesService.execute("This is a sentence. That is a sentence. There are hopefully 3 sentences detected.", Language.ENGLISH);
+        BreakSentences.execute("This is a sentence. That is a sentence. There are hopefully 3 sentences detected.", Language.ENGLISH);
     }
 
     @Test
     public void testBreakSentencesEnglish_Large() throws Exception {
-        Integer[] results = breakSentencesService.execute("Figures from the Office for National Statistics (ONS) show that between December and April, "
+        Integer[] results = BreakSentences.execute("Figures from the Office for National Statistics (ONS) show that between December and April, "
                         + "the five-month period typically regarded as peak bonus season, those working in the financial "
                         + "intermediation sector received bonuses worth ¬¨¬£7.6bn. The figure is more than 40pc lower than last"
                         + "year's total of ¬¨¬£13.2bn, but the fact that it came during a period where the banking system owed its"
@@ -136,10 +135,10 @@ public class BreakSentencesTest {
 
     @Test
     public void testBreakSentencesEnglish_LargeNoKey() throws Exception {
-        breakSentencesService.setSubscriptionKey(null);
+        BreakSentences.setSubscriptionKey(null);
         exception.expect(RuntimeException.class);
         exception.expectMessage("Must provide a Windows Azure Marketplace SubscriptionKey - Please see https://www.microsoft.com/cognitive-services/en-us/translator-api/documentation/TranslatorInfo/overview for further documentation");
-        Integer[] results = breakSentencesService.execute("Figures from the Office for National Statistics (ONS) show that between December and April, "
+        Integer[] results = BreakSentences.execute("Figures from the Office for National Statistics (ONS) show that between December and April, "
                         + "the five-month period typically regarded as peak bonus season, those working in the financial "
                         + "intermediation sector received bonuses worth ¬¨¬£7.6bn. The figure is more than 40pc lower than last"
                         + "year's total of ¬¨¬£13.2bn, but the fact that it came during a period where the banking system owed its"
@@ -229,7 +228,7 @@ public class BreakSentencesTest {
         largeText += " " + largeText;
         exception.expect(RuntimeException.class);
         exception.expectMessage("TEXT_TOO_LARGE - Microsoft Translator (BreakSentences) can handle up to 10,240 bytes per request");
-        breakSentencesService.execute(largeText.substring(0, 10242), Language.ENGLISH);
+        BreakSentences.execute(largeText.substring(0, 10242), Language.ENGLISH);
 
     }
 }

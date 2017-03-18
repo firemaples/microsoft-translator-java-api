@@ -42,10 +42,15 @@ public abstract class MicrosoftTranslatorAPI {
     //Encoding type
     protected static final String ENCODING = "UTF-8";
 
+    protected static String apiKey;
     private static String DatamarketAccessUri = "https://api.cognitive.microsoft.com/sts/v1.0/issueToken";
     private static String OcpApimSubscriptionKeyHeader = "Ocp-Apim-Subscription-Key";
-
+    private static String referrer;
+    private static String subscriptionKey;
+    private static String token;
     private static long tokenCacheExpiration = 5 * 60 * 1000;
+    private static long tokenExpiration = 0;
+    private static String contentType = "text/plain";
 
     protected static final String PARAM_APP_ID = "appId=",
             PARAM_TO_LANG = "&to=",
@@ -57,14 +62,16 @@ public abstract class MicrosoftTranslatorAPI {
             PARAM_LOCALE = "&locale=",
             PARAM_LANGUAGE_CODES = "&languageCodes=";
 
-    private String contentType = "text/plain";
-    private String referrer;
-    private String subscriptionKey;
-    private String token;
-    private long tokenExpiration = 0;
-
-    public MicrosoftTranslatorAPI(String subscriptionKey) {
-        this.subscriptionKey = subscriptionKey;
+    /**
+     * Sets the API key.
+     * <p>
+     * Note: Should ONLY be used with API Keys generated prior to March 31, 2012. All new applications should obtain a ClientId and Client Secret by following
+     * the guide at: http://msdn.microsoft.com/en-us/library/hh454950.aspx
+     *
+     * @param pKey The API key.
+     */
+    public static void setKey(final String pKey) {
+        apiKey = pKey;
     }
 
     /**
@@ -75,11 +82,11 @@ public abstract class MicrosoftTranslatorAPI {
      *
      * @param pKey The API key.
      */
-    public void setContentType(final String pKey) {
+    public static void setContentType(final String pKey) {
         contentType = pKey;
     }
 
-    public void setSubscriptionKey(String pSubscriptionKey) {
+    public static void setSubscriptionKey(String pSubscriptionKey) {
         subscriptionKey = pSubscriptionKey;
     }
 
@@ -88,19 +95,16 @@ public abstract class MicrosoftTranslatorAPI {
      *
      * @param pReferrer The HTTP client referrer.
      */
-    public void setHttpReferrer(final String pReferrer) {
+    public static void setHttpReferrer(final String pReferrer) {
         referrer = pReferrer;
     }
 
     /**
      * Gets the OAuth access token.
      *
-     * @param referrer        Referrer string
-     * @param subscriptionKey The Subscription Key
-     * @return Token
-     * @throws Exception Throws http exception
+     * @param subscriptionKey The Subscription key
      */
-    public static String getToken(final String referrer, final String subscriptionKey) throws Exception {
+    public static String getToken(final String subscriptionKey) throws Exception {
 //       final String params = "grant_type=client_credentials&scope=http://api.microsofttranslator.com"
 //               + "&client_id=" + URLEncoder.encode(clientId,ENCODING)
 //               + "&client_secret=" + URLEncoder.encode(clientSecret,ENCODING) ;
@@ -134,9 +138,9 @@ public abstract class MicrosoftTranslatorAPI {
         }
     }
 
-    public void resetToken() {
+    public static void resetToken(){
         token = null;
-        tokenCacheExpiration = 0;
+        tokenExpiration = 0;
     }
 
     /**
@@ -146,9 +150,9 @@ public abstract class MicrosoftTranslatorAPI {
      * @return The translated String.
      * @throws Exception on error.
      */
-    private String retrieveResponse(final URL url) throws Exception {
+    private static String retrieveResponse(final URL url) throws Exception {
         if (subscriptionKey != null && System.currentTimeMillis() > tokenExpiration) {
-            String tokenKey = getToken(referrer, subscriptionKey);
+            String tokenKey = getToken(subscriptionKey);
             tokenExpiration = System.currentTimeMillis() + tokenCacheExpiration;
             token = "Bearer " + tokenKey;
         }
@@ -185,7 +189,7 @@ public abstract class MicrosoftTranslatorAPI {
      * @return The translated String.
      * @throws Exception on error.
      */
-    protected String retrieveString(final URL url) throws Exception {
+    protected static String retrieveString(final URL url) throws Exception {
         try {
             final String response = retrieveResponse(url);
             return jsonToString(response);
@@ -199,12 +203,11 @@ public abstract class MicrosoftTranslatorAPI {
      * retrieves the String value of the specified JSON Property, and returns the result of
      * the request as a String Array.
      *
-     * @param url          The URL to query for a String response.
-     * @param jsonProperty Json property
+     * @param url The URL to query for a String response.
      * @return The translated String[].
      * @throws Exception on error.
      */
-    protected String[] retrieveStringArr(final URL url, final String jsonProperty) throws Exception {
+    protected static String[] retrieveStringArr(final URL url, final String jsonProperty) throws Exception {
         try {
             final String response = retrieveResponse(url);
             return jsonToStringArr(response, jsonProperty);
@@ -223,7 +226,7 @@ public abstract class MicrosoftTranslatorAPI {
      * @return The translated String[].
      * @throws Exception on error.
      */
-    protected String[] retrieveStringArr(final URL url) throws Exception {
+    protected static String[] retrieveStringArr(final URL url) throws Exception {
         return retrieveStringArr(url, null);
     }
 
@@ -234,7 +237,7 @@ public abstract class MicrosoftTranslatorAPI {
      * @return The translated String.
      * @throws Exception on error.
      */
-    protected Integer[] retrieveIntArray(final URL url) throws Exception {
+    protected static Integer[] retrieveIntArray(final URL url) throws Exception {
         try {
             final String response = retrieveResponse(url);
             return jsonToIntArr(response);
@@ -309,7 +312,7 @@ public abstract class MicrosoftTranslatorAPI {
     }
 
     //Check if ready to make request, if not, throw a RuntimeException
-    protected void validateServiceState() throws Exception {
+    protected static void validateServiceState() throws Exception {
         if (subscriptionKey == null) {
             throw new RuntimeException("Must provide a Windows Azure Marketplace SubscriptionKey - Please see https://www.microsoft.com/cognitive-services/en-us/translator-api/documentation/TranslatorInfo/overview for further documentation");
         }
@@ -321,7 +324,7 @@ public abstract class MicrosoftTranslatorAPI {
         for (Object obj : values) {
             if (obj != null) {
                 value = obj.toString();
-                if (value.length() != 0) {
+                if(value.length()!=0) {
                     list.add(value);
                 }
             }

@@ -68,6 +68,7 @@ public class SpokenDialectTest {
 
     @Test
     public void testGetSpokenDialect_WrongKey() throws Exception {
+        SpokenDialect.resetToken();
         SpokenDialect.flushNameCache();
         SpokenDialect.setSubscriptionKey("wrong");
         Language locale = Language.ENGLISH;

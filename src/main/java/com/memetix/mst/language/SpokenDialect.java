@@ -69,8 +69,6 @@ public enum SpokenDialect {
      */
     private Map<Language, String> localizedCache = new ConcurrentHashMap<Language, String>();
 
-    private static SpokenDialectService spokenDialectService;
-
     /**
      * Enum constructor.
      *
@@ -99,12 +97,17 @@ public enum SpokenDialect {
         return language;
     }
 
+    public static void setKey(String pKey) {
+        SpokenDialectService.setKey(pKey);
+    }
+
+
     public static void setSubscriptionKey(String pSubscriptionKey) {
-        if (spokenDialectService == null) {
-            spokenDialectService = new SpokenDialectService(pSubscriptionKey);
-        } else {
-            spokenDialectService.setSubscriptionKey(pSubscriptionKey);
-        }
+        SpokenDialectService.setSubscriptionKey(pSubscriptionKey);
+    }
+
+    public static void resetToken(){
+        SpokenDialectService.resetToken();
     }
 
     /**
@@ -127,12 +130,9 @@ public enum SpokenDialect {
         if (this.localizedCache.containsKey(locale)) {
             localizedName = this.localizedCache.get(locale);
         } else {
-            if(spokenDialectService == null){
-                throw new IllegalStateException("SubscriptionKey not set");
-            }
 
             //If not in the cache, pre-load all the Language names for this locale
-            String[] names = spokenDialectService.execute(SpokenDialect.values(), locale);
+            String[] names = SpokenDialectService.execute(SpokenDialect.values(), locale);
             int i = 0;
             for (SpokenDialect lang : SpokenDialect.values()) {
                 lang.localizedCache.put(locale, names[i]);
@@ -158,17 +158,14 @@ public enum SpokenDialect {
     private final static class SpokenDialectService extends MicrosoftTranslatorAPI {
         private static final String SERVICE_URL = "http://api.microsofttranslator.com/V2/Ajax.svc/GetLanguageNames?";
 
-        public SpokenDialectService(String subscriptionKey) {
-            super(subscriptionKey);
-        }
-
         /**
          * Detects the language of a supplied String.
          *
+         * @param text The String to detect the language of.
          * @return A DetectResult object containing the language, confidence and reliability.
          * @throws Exception on error.
          */
-        public String[] execute(final SpokenDialect[] targets, final Language locale) throws Exception {
+        public static String[] execute(final SpokenDialect[] targets, final Language locale) throws Exception {
             //Run the basic service validations first
             validateServiceState();
             String[] localizedNames = new String[0];
@@ -179,6 +176,7 @@ public enum SpokenDialect {
             final String targetString = buildStringArrayParam(SpokenDialect.values());
 
             final URL url = new URL(SERVICE_URL
+                    + (apiKey != null ? PARAM_APP_ID + URLEncoder.encode(apiKey, ENCODING) : "")
                     + PARAM_LOCALE + URLEncoder.encode(locale.toString(), ENCODING)
                     + PARAM_LANGUAGE_CODES + URLEncoder.encode(targetString, ENCODING));
             localizedNames = retrieveStringArr(url);
