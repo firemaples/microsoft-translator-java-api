@@ -47,6 +47,21 @@ I've posted some examples to the [SVN repository](http://code.google.com/p/micro
   * [Generating and playing a WAV of given text spoken in a chosen dialect](http://code.google.com/p/microsoft-translator-java-api/source/browse/trunk/microsoft-translator-java-examples/src/main/java/com/memetix/mst/examples/SpeakTextExample.java)
   * [Bulk translation using the TranslateArray service](http://code.google.com/p/microsoft-translator-java-api/source/browse/trunk/microsoft-translator-java-examples/src/main/java/com/memetix/mst/examples/TranslateArrayExample.java)
 
+Maven
+=====
+
+    <dependency>
+      <groupId>io.github.firemaples</groupId>
+      <artifactId>microsoft-translator-java-api</artifactId>
+      <version>0.8.1</version>
+      <type>pom</type>
+    </dependency>
+
+Gradle
+=====
+
+    compile 'io.github.firemaples:microsoft-translator-java-api:0.8.1'
+
 Build JAR
 =====
 There is a ready jar file you can just download (https://github.com/firemaples/microsoft-translator-java-api/blob/master/microsoft-translator-java-api-0.8.0-with-dependencies.jar) , or
