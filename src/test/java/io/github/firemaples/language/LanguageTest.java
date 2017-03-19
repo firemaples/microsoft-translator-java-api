@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.memetix.mst.language;
+package io.github.firemaples.language;
 
 import org.junit.After;
 import org.junit.Before;
@@ -24,18 +24,22 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 
 /**
  * @author Jonathan Griggs [jonathan.griggs at gmail.com]
+ * @author Firemaples (add new Azure framework support) [firemaples at gmail.com]
  */
-public class SpokenDialectTest {
+public class LanguageTest {
     Properties p;
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
+
 
     @Before
     public void setUp() throws Exception {
@@ -46,7 +50,6 @@ public class SpokenDialectTest {
         if (System.getProperty("test.api.key") != null) {
             subscriptionKey = System.getProperty("test.api.key").split(",")[1];
         }
-        SpokenDialect.setSubscriptionKey(subscriptionKey);
         Language.setSubscriptionKey(subscriptionKey);
     }
 
@@ -55,37 +58,14 @@ public class SpokenDialectTest {
 
     }
 
-    @Test
-    public void testGetSpokenDialect_NoKey() throws Exception {
-        SpokenDialect.flushNameCache();
-        SpokenDialect.setSubscriptionKey(null);
-        Language locale = Language.ENGLISH;
-
-        exception.expect(RuntimeException.class);
-        exception.expectMessage("Must provide a Windows Azure Marketplace SubscriptionKey - Please see https://www.microsoft.com/cognitive-services/en-us/translator-api/documentation/TranslatorInfo/overview for further documentation");
-        SpokenDialect.FRENCH_CANADA.getName(locale);
-    }
-
-    @Test
-    public void testGetSpokenDialect_WrongKey() throws Exception {
-        SpokenDialect.resetToken();
-        SpokenDialect.flushNameCache();
-        SpokenDialect.setSubscriptionKey("wrong");
-        Language locale = Language.ENGLISH;
-
-        exception.expect(Exception.class);
-        exception.expectMessage("[microsoft-translator-api] Error retrieving translation.");
-        SpokenDialect.FRENCH_CANADA.getName(locale);
-    }
-
     /**
      * Test of valueOf method, of class Language.
      */
     @Test
     public void testValueOf() {
-        String name = "ENGLISH_UNITED_STATES";
-        SpokenDialect expResult = SpokenDialect.ENGLISH_UNITED_STATES;
-        SpokenDialect result = SpokenDialect.valueOf(name);
+        String name = "ENGLISH";
+        Language expResult = Language.ENGLISH;
+        Language result = Language.valueOf(name);
         assertEquals(expResult, result);
 
     }
@@ -95,10 +75,32 @@ public class SpokenDialectTest {
      */
     @Test
     public void testFromString() {
-        String pLanguage = "en-us";
-        SpokenDialect expResult = SpokenDialect.ENGLISH_UNITED_STATES;
-        SpokenDialect result = SpokenDialect.fromString(pLanguage);
+        String pLanguage = "en";
+        Language expResult = Language.ENGLISH;
+        Language result = Language.fromString(pLanguage);
         assertEquals(expResult, result);
+    }
+
+    @Test
+    public void testGetLanguage_NoKey() throws Exception {
+        Language.setSubscriptionKey(null);
+        Language locale = Language.PERSIAN;
+
+        exception.expect(RuntimeException.class);
+        exception.expectMessage("Must provide a Windows Azure Marketplace SubscriptionKey - Please see https://www.microsoft.com/cognitive-services/en-us/translator-api/documentation/TranslatorInfo/overview for further documentation");
+        Language.FRENCH.getName(locale);
+    }
+
+//    @Ignore("Should be fixed")
+    @Test
+    public void testGetLanguage_WrongKey() throws Exception {
+        Language.resetToken();
+        Language.setSubscriptionKey("wrong_key");
+        Language locale = Language.PERSIAN;
+
+        exception.expect(Exception.class);
+        exception.expectMessage("[microsoft-translator-api] Error retrieving translation.");
+        Language.FRENCH.getName(locale);
     }
 
     /**
@@ -106,11 +108,12 @@ public class SpokenDialectTest {
      */
     @Test
     public void testToString() {
-        SpokenDialect instance = SpokenDialect.ENGLISH_UNITED_STATES;
-        String expResult = "en-us";
+        Language instance = Language.ENGLISH;
+        String expResult = "en";
         String result = instance.toString();
         assertEquals(expResult, result);
     }
+
 
     /**
      * Test of getLanguageName method, of class Language.
@@ -118,13 +121,13 @@ public class SpokenDialectTest {
     @Test
     public void testGetNameLocalized() throws Exception {
         Language locale = Language.ENGLISH;
-        String expResult = "French (Canada)";
-        String result = SpokenDialect.FRENCH_CANADA.getName(locale);
+        String expResult = "French";
+        String result = Language.FRENCH.getName(locale);
         assertEquals(expResult, result);
 
         locale = Language.FRENCH;
-        expResult = "Anglais (Inde)";
-        result = SpokenDialect.ENGLISH_INDIA.getName(locale);
+        expResult = "Anglais";
+        result = Language.ENGLISH.getName(locale);
         assertEquals(expResult, result);
     }
 
@@ -132,6 +135,7 @@ public class SpokenDialectTest {
     public void testGetAllNamesLocalizedCached() throws Exception {
         //Flush the caches, so we can test for timing
         Language.flushNameCache();
+
 
         long startTime1 = System.currentTimeMillis();
         for (Language lang : Language.values()) {
@@ -143,10 +147,8 @@ public class SpokenDialectTest {
         long startTime2 = System.currentTimeMillis();
         for (Language lang : Language.values()) {
             lang.getName(Language.FRENCH);
-            //System.out.println(name + " : " + lang.toString());
         }
         long totalTime2 = System.currentTimeMillis() - startTime2;
-        //System.out.println("Uncached: " + totalTime1 + "ms, Cached: " + totalTime2 + "ms");
         assert totalTime1 > totalTime2;
         
         /* Uncomment this block to eyeball and make sure the name localization is working for all languages
@@ -154,5 +156,26 @@ public class SpokenDialectTest {
             System.out.println(lang.toString() + " / " + Language.VIETNAMESE.getName(lang));
         }
         */
+    }
+
+    @Test
+    public void testGetAllLanguageCodes() throws Exception {
+        //Flush the caches, so we can test for timing
+        Language.flushNameCache();
+
+        List<String> languageCodes = Language.getLanguageCodesForTranslation();
+        assert languageCodes.size() > 0;
+    }
+
+    @Test
+    public void testGetLocalizedNameMap() throws Exception {
+        Language locale = Language.ENGLISH;
+        Map<String, Language> result = Language.values(locale);
+        /*
+        for(String langName : result.keySet()) {
+            System.out.println(langName);
+        }
+         */
+        assertEquals(42, result.size());
     }
 }

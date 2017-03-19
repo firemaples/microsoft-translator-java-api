@@ -15,9 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.memetix.mst.language;
+package io.github.firemaples.language;
 
-import com.memetix.mst.MicrosoftTranslatorAPI;
+import io.github.firemaples.MicrosoftTranslatorAPI;
 
 import java.net.URL;
 import java.net.URLEncoder;
@@ -30,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Uses the AJAX Interface V2 - see: http://msdn.microsoft.com/en-us/library/ff512399.aspx
  *
  * @author Jonathan Griggs [jonathan.griggs at gmail.com]
+ * @author Firemaples (add new Azure framework support) [firemaples at gmail.com]
  */
 public enum Language {
     AUTO_DETECT(""),

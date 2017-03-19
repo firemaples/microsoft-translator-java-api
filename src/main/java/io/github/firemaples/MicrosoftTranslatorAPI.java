@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.memetix.mst;
+package io.github.firemaples;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -37,6 +37,7 @@ import java.net.URL;
  * Uses the AJAX Interface V2 - see: http://msdn.microsoft.com/en-us/library/ff512404.aspx
  *
  * @author Jonathan Griggs
+ * @author Firemaples (add new Azure framework support) [firemaples at gmail.com]
  */
 public abstract class MicrosoftTranslatorAPI {
     //Encoding type

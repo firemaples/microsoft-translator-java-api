@@ -15,9 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.memetix.mst.sentence;
+package io.github.firemaples.sentence;
 
-import com.memetix.mst.language.Language;
+import io.github.firemaples.language.Language;
 
 import org.junit.After;
 import org.junit.Before;
@@ -30,6 +30,9 @@ import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * @author Firemaples (add new Azure framework support) [firemaples at gmail.com]
+ */
 public class BreakSentencesTest {
     Properties p;
 

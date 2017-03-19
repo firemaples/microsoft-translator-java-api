@@ -15,9 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.memetix.mst.speak;
+package io.github.firemaples.speak;
 
-import com.memetix.mst.language.SpokenDialect;
+import io.github.firemaples.language.SpokenDialect;
 
 import org.junit.After;
 import org.junit.Before;
@@ -32,6 +32,7 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * @author Jonathan Griggs [jonathan.griggs at gmail.com]
+ * @author Firemaples (add new Azure framework support) [firemaples at gmail.com]
  */
 public class SpeakTest {
     Properties p;

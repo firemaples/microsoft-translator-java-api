@@ -15,9 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.memetix.mst.detect;
-
-import com.memetix.mst.language.Language;
+package io.github.firemaples.detect;
 
 import org.junit.After;
 import org.junit.Before;
@@ -28,12 +26,15 @@ import org.junit.rules.ExpectedException;
 import java.net.URL;
 import java.util.Properties;
 
+import io.github.firemaples.language.Language;
+
 import static org.junit.Assert.assertEquals;
 
 /**
  * Unit Tests for the Detect class
  *
  * @author Jonathan Griggs [jonathan.griggs at gmail.com]
+ * @author Firemaples (add new Azure framework support) [firemaples at gmail.com]
  */
 public class DetectTest {
     Properties p;

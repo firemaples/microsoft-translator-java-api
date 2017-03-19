@@ -15,12 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.memetix.mst.translate;
+package io.github.firemaples.translate;
 
-import com.memetix.mst.language.Language;
-import com.memetix.mst.MicrosoftTranslatorAPI;
+import io.github.firemaples.language.Language;
+import io.github.firemaples.MicrosoftTranslatorAPI;
 import java.net.URL;
 import java.net.URLEncoder;
+
 /**
  * Translate
  * 
@@ -29,6 +30,7 @@ import java.net.URLEncoder;
  * Uses the AJAX Interface V2 - see: http://msdn.microsoft.com/en-us/library/ff512406.aspx
  * 
  * @author Jonathan Griggs [jonathan.griggs at gmail.com]
+ * @author Firemaples (add new Azure framework support) [firemaples at gmail.com]
  */
 public final class Translate extends MicrosoftTranslatorAPI {
     

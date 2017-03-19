@@ -15,13 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.memetix.mst.sentence;
+package io.github.firemaples.sentence;
+
+import io.github.firemaples.MicrosoftTranslatorAPI;
+import io.github.firemaples.language.Language;
 
 import java.net.URL;
 import java.net.URLEncoder;
-
-import com.memetix.mst.MicrosoftTranslatorAPI;
-import com.memetix.mst.language.Language;
 
 /**
  * BreakSentences 
@@ -34,6 +34,7 @@ import com.memetix.mst.language.Language;
  * Uses the AJAX Interface V2 - see: http://msdn.microsoft.com/en-us/library/ff512395.aspx
  * 
  * @author Jonathan Griggs [jonathan.griggs at gmail.com]
+ * @author Firemaples (add new Azure framework support) [firemaples at gmail.com]
  */
 public final class BreakSentences extends MicrosoftTranslatorAPI {
 

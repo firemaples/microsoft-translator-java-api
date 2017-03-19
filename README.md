@@ -22,8 +22,8 @@ Quickstart
 
 Use Maven, Gradle or Download the latest [JAR with dependencies](https://github.com/firemaples/microsoft-translator-java-api/blob/master/microsoft-translator-java-api-0.8.0-with-dependencies.jar)
 
-    import com.memetix.mst.language.Language;
-    import com.memetix.mst.translate.Translate;
+    import io.github.firemaples.language.Language;
+    import io.github.firemaples.translate.Translate;
 
     public class Main {
       public static void main(String[] args) throws Exception {

@@ -15,13 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.memetix.mst.detect;
-
-import com.memetix.mst.MicrosoftTranslatorAPI;
-import com.memetix.mst.language.Language;
+package io.github.firemaples.detect;
 
 import java.net.URL;
 import java.net.URLEncoder;
+
+import io.github.firemaples.MicrosoftTranslatorAPI;
+import io.github.firemaples.language.Language;
 
 /**
  * Detect 
@@ -31,6 +31,7 @@ import java.net.URLEncoder;
  * Uses the AJAX Interface V2 - see: http://msdn.microsoft.com/en-us/library/ff512396.aspx 
  * 
  * @author Jonathan Griggs [jonathan.griggs at gmail.com]
+ * @author Firemaples (add new Azure framework support) [firemaples at gmail.com]
  */
 public final class Detect extends MicrosoftTranslatorAPI {
     private static final String SERVICE_URL = "http://api.microsofttranslator.com/V2/Ajax.svc/Detect?";

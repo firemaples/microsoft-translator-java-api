@@ -15,10 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.memetix.mst.speak;
+package io.github.firemaples.speak;
 
-import com.memetix.mst.MicrosoftTranslatorAPI;
-import com.memetix.mst.language.SpokenDialect;
+import io.github.firemaples.MicrosoftTranslatorAPI;
+import io.github.firemaples.language.SpokenDialect;
 import java.net.URL;
 import java.net.URLEncoder;
 
@@ -30,8 +30,8 @@ import java.net.URLEncoder;
  * Returns a string which is a URL to a wave stream of the passed-in text being spoken in the desired language.
  * 
  * Uses the AJAX Interface V2 - see: http://msdn.microsoft.com/en-us/library/ff512405.aspx
- * 
- * @author Jonathan Griggs [jonathan.griggs at gmail.com]
+ *
+ * @author Firemaples (add new Azure framework support) [firemaples at gmail.com]
  */
 public final class Speak extends MicrosoftTranslatorAPI {
     private static final String SERVICE_URL = "http://api.microsofttranslator.com/V2/Ajax.svc/Speak?";
