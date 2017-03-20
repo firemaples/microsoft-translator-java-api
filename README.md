@@ -53,23 +53,15 @@ Maven
     <dependency>
       <groupId>io.github.firemaples</groupId>
       <artifactId>microsoft-translator-java-api</artifactId>
-      <version>0.8.2</version>
+      <version>0.8.3</version>
       <type>pom</type>
     </dependency>
 
 Gradle
 =====
 
-    repositories {
-        maven {
-            url 'https://dl.bintray.com/firemaples/maven/'
-        }
-    }
-
-    ...
-
     dependencies {
-        compile 'io.github.firemaples:microsoft-translator-java-api:0.8.2'
+        compile 'io.github.firemaples:microsoft-translator-java-api:0.8.3'
     }
 
 Build JAR
