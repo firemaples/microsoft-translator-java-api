@@ -20,7 +20,7 @@ _Please note: If you signed up for a Bing Developer Key after March 31, 2012, yo
 Quickstart
 ===========
 
-Use Maven, Gradle or Download the latest [JAR with dependencies](https://github.com/firemaples/microsoft-translator-java-api/blob/master/microsoft-translator-java-api-0.8.0-with-dependencies.jar)
+Use Maven, Gradle or Download the latest [JAR with dependencies](https://github.com/firemaples/microsoft-translator-java-api/blob/master/microsoft-translator-java-api-with-dependencies-0.8.3.jar)
 
     import io.github.firemaples.language.Language;
     import io.github.firemaples.translate.Translate;
@@ -66,7 +66,7 @@ Gradle
 
 Build JAR
 =====
-There is a ready jar file you can just download (https://github.com/firemaples/microsoft-translator-java-api/blob/master/microsoft-translator-java-api-0.8.0-with-dependencies.jar) , or
+There is a ready jar file you can just download (https://github.com/firemaples/microsoft-translator-java-api/blob/master/microsoft-translator-java-api-with-dependencies-0.8.3.jar) , or
  you can build it by yourself:
 
 Download this project and run the command in the lib folder
@@ -75,7 +75,7 @@ Download this project and run the command in the lib folder
 
 After the command running finished, yur will found the output jar file in the path:
 
->    lib/build/libs/lib-with-dependencies.jar
+>    lib/build/libs/microsoft-translator-java-api-with-dependencies-X.X.X.jar
 
 License
 =======
