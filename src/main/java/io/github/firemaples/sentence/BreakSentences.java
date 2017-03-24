@@ -17,11 +17,11 @@
  */
 package io.github.firemaples.sentence;
 
-import io.github.firemaples.MicrosoftTranslatorAPI;
-import io.github.firemaples.language.Language;
-
 import java.net.URL;
 import java.net.URLEncoder;
+
+import io.github.firemaples.MicrosoftTranslatorAPI;
+import io.github.firemaples.language.Language;
 
 /**
  * BreakSentences 
@@ -41,7 +41,8 @@ public final class BreakSentences extends MicrosoftTranslatorAPI {
 	private static final String SERVICE_URL = "http://api.microsofttranslator.com/V2/Ajax.svc/BreakSentences?";
 
 	// prevent instantiation
-	private BreakSentences(){};
+	private BreakSentences(){}
+
 	/**
 	 * Reports the number of sentences detected and the length of those sentences
 	 * 
@@ -57,7 +58,8 @@ public final class BreakSentences extends MicrosoftTranslatorAPI {
                         +(apiKey != null ? PARAM_APP_ID + URLEncoder.encode(apiKey,ENCODING) : "") 
                         +PARAM_SENTENCES_LANGUAGE+URLEncoder.encode(fromLang.toString(), ENCODING)
                         +PARAM_TEXT_SINGLE+URLEncoder.encode(text, ENCODING));
-                     
+
+		//noinspection UnnecessaryLocalVariable
 		final Integer[] response = retrieveIntArray(url);
 		return response;
 	}

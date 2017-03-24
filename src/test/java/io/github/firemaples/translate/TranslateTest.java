@@ -63,9 +63,9 @@ public class TranslateTest{
         Translate.setHttpReferrer(null);
     }
 
-    public void testSetApiKey() {
-        assert(true);
-    }
+//    public void testSetApiKey() {
+//        assert(true);
+//    }
     
     @Test
     public void testTranslate_SetReferrer() throws Exception {

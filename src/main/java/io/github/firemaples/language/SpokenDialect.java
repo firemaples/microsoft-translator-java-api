@@ -17,12 +17,12 @@
  */
 package io.github.firemaples.language;
 
-import io.github.firemaples.MicrosoftTranslatorAPI;
-
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import io.github.firemaples.MicrosoftTranslatorAPI;
 
 /**
  * SpokenLanguage - an enum of all spoken language codes supported by the Microsoft Translator API for the Speak Service
@@ -68,14 +68,14 @@ public enum SpokenDialect {
     /**
      * Internal Localized Name Cache
      */
-    private Map<Language, String> localizedCache = new ConcurrentHashMap<Language, String>();
+    private Map<Language, String> localizedCache = new ConcurrentHashMap<>();
 
     /**
      * Enum constructor.
      *
      * @param pLanguage The language identifier.
      */
-    private SpokenDialect(final String pLanguage) {
+    SpokenDialect(final String pLanguage) {
         language = pLanguage;
     }
 
@@ -127,7 +127,7 @@ public enum SpokenDialect {
      * @return The String representation of this language's localized Name.
      */
     public String getName(Language locale) throws Exception {
-        String localizedName = null;
+        String localizedName;
         if (this.localizedCache.containsKey(locale)) {
             localizedName = this.localizedCache.get(locale);
         } else {
@@ -162,7 +162,7 @@ public enum SpokenDialect {
         /**
          * Detects the language of a supplied String.
          *
-         * @param text The String to detect the language of.
+         * @param targets Targets
          * @return A DetectResult object containing the language, confidence and reliability.
          * @throws Exception on error.
          */

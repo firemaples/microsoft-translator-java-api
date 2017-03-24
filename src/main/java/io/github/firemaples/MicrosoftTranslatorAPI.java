@@ -44,11 +44,14 @@ public abstract class MicrosoftTranslatorAPI {
     protected static final String ENCODING = "UTF-8";
 
     protected static String apiKey;
+    @SuppressWarnings("FieldCanBeLocal")
     private static String DatamarketAccessUri = "https://api.cognitive.microsoft.com/sts/v1.0/issueToken";
+    @SuppressWarnings("FieldCanBeLocal")
     private static String OcpApimSubscriptionKeyHeader = "Ocp-Apim-Subscription-Key";
     private static String referrer;
     private static String subscriptionKey;
     private static String token;
+    @SuppressWarnings("FieldCanBeLocal")
     private static long tokenCacheExpiration = 5 * 60 * 1000;
     private static long tokenExpiration = 0;
     private static String contentType = "text/plain";
@@ -133,9 +136,7 @@ public abstract class MicrosoftTranslatorAPI {
             }
             return result;
         } finally {
-            if (uc != null) {
-                uc.disconnect();
-            }
+            uc.disconnect();
         }
     }
 
@@ -177,9 +178,7 @@ public abstract class MicrosoftTranslatorAPI {
             }
             return result;
         } finally {
-            if (uc != null) {
-                uc.disconnect();
-            }
+            uc.disconnect();
         }
     }
 
@@ -259,8 +258,9 @@ public abstract class MicrosoftTranslatorAPI {
     }
 
     private static String jsonToString(final String inputString) throws Exception {
+        //noinspection UnnecessaryLocalVariable
         String json = (String) JSONValue.parse(inputString);
-        return json.toString();
+        return json;
     }
 
     // Helper method to parse a JSONArray. Reads an array of JSONObjects and returns a String Array
@@ -326,6 +326,7 @@ public abstract class MicrosoftTranslatorAPI {
             if (obj != null) {
                 value = obj.toString();
                 if (value.length() != 0) {
+                    //noinspection unchecked
                     list.add(value);
                 }
             }

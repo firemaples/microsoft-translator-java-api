@@ -17,10 +17,11 @@
  */
 package io.github.firemaples.translate;
 
-import io.github.firemaples.language.Language;
-import io.github.firemaples.MicrosoftTranslatorAPI;
 import java.net.URL;
 import java.net.URLEncoder;
+
+import io.github.firemaples.MicrosoftTranslatorAPI;
+import io.github.firemaples.language.Language;
 
 /**
  * Translate
@@ -39,8 +40,8 @@ public final class Translate extends MicrosoftTranslatorAPI {
     private static final String ARRAY_JSON_OBJECT_PROPERTY = "TranslatedText";
     
     //prevent instantiation
-    private Translate(){};
-    
+    private Translate(){}
+
     /**
      * Translates text from a given Language to another given Language using Microsoft Translator.
      * 
@@ -60,7 +61,8 @@ public final class Translate extends MicrosoftTranslatorAPI {
                 + PARAM_TEXT_SINGLE + URLEncoder.encode(text,ENCODING);
         
         final URL url = new URL(SERVICE_URL + params);
-    	final String response = retrieveString(url);
+        //noinspection UnnecessaryLocalVariable
+        final String response = retrieveString(url);
     	return response;
     }
     
@@ -100,7 +102,8 @@ public final class Translate extends MicrosoftTranslatorAPI {
                 + PARAM_TEXT_ARRAY + URLEncoder.encode(buildStringArrayParam(texts),ENCODING);
         
         final URL url = new URL(ARRAY_SERVICE_URL + params);
-    	final String[] response = retrieveStringArr(url,ARRAY_JSON_OBJECT_PROPERTY);
+        //noinspection UnnecessaryLocalVariable
+        final String[] response = retrieveStringArr(url,ARRAY_JSON_OBJECT_PROPERTY);
     	return response;
     }
     

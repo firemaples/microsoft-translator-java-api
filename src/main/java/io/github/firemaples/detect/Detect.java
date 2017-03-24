@@ -38,7 +38,8 @@ public final class Detect extends MicrosoftTranslatorAPI {
     private static final String ARRAY_SERVICE_URL = "http://api.microsofttranslator.com/V2/Ajax.svc/DetectArray?";
     
     // prevent instantiation
-    private Detect(){};
+    private Detect(){}
+
     /**
 	 * Detects the language of a supplied String.
 	 * 
@@ -70,7 +71,8 @@ public final class Detect extends MicrosoftTranslatorAPI {
 		final URL url = new URL(ARRAY_SERVICE_URL 
                         +(apiKey != null ? PARAM_APP_ID + URLEncoder.encode(apiKey,ENCODING) : "") 
                         +PARAM_TEXT_ARRAY+URLEncoder.encode(textArr, ENCODING));
-		final String[] response = retrieveStringArr(url);
+        //noinspection UnnecessaryLocalVariable
+        final String[] response = retrieveStringArr(url);
                 return response;
 	}
         

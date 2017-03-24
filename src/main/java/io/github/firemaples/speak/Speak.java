@@ -17,10 +17,11 @@
  */
 package io.github.firemaples.speak;
 
-import io.github.firemaples.MicrosoftTranslatorAPI;
-import io.github.firemaples.language.SpokenDialect;
 import java.net.URL;
 import java.net.URLEncoder;
+
+import io.github.firemaples.MicrosoftTranslatorAPI;
+import io.github.firemaples.language.SpokenDialect;
 
 /**
  * Speak 
@@ -37,8 +38,9 @@ public final class Speak extends MicrosoftTranslatorAPI {
     private static final String SERVICE_URL = "http://api.microsofttranslator.com/V2/Ajax.svc/Speak?";
 
      //prevent instantiation
-     private Speak() {};
-     /**
+     private Speak() {}
+
+    /**
 	 * Detects the language of a supplied String.
 	 * 
 	 * @param text The String to generate a WAV for
@@ -52,7 +54,8 @@ public final class Speak extends MicrosoftTranslatorAPI {
                         +(apiKey != null ? PARAM_APP_ID + URLEncoder.encode(apiKey,ENCODING) : "") 
                         +PARAM_SPOKEN_LANGUAGE+URLEncoder.encode(language.toString(),ENCODING)
                         +PARAM_TEXT_SINGLE+URLEncoder.encode(text, ENCODING));
-		final String response = retrieveString(url);
+        //noinspection UnnecessaryLocalVariable
+        final String response = retrieveString(url);
                 return response;
 	}
         

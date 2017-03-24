@@ -17,12 +17,15 @@
  */
 package io.github.firemaples.language;
 
-import io.github.firemaples.MicrosoftTranslatorAPI;
-
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
+
+import io.github.firemaples.MicrosoftTranslatorAPI;
 
 /**
  * Language - an enum of all language codes supported by the Microsoft Translator API
@@ -84,14 +87,14 @@ public enum Language {
     /**
      * Internal Localized Name Cache
      */
-    private Map<Language, String> localizedCache = new ConcurrentHashMap<Language, String>();
+    private Map<Language, String> localizedCache = new ConcurrentHashMap<>();
 
     /**
      * Enum constructor.
      *
      * @param pLanguage The language identifier.
      */
-    private Language(final String pLanguage) {
+    Language(final String pLanguage) {
         language = pLanguage;
     }
 
@@ -142,7 +145,7 @@ public enum Language {
      * @return The String representation of this language's localized Name.
      */
     public String getName(Language locale) throws Exception {
-        String localizedName = null;
+        String localizedName;
         if (this.localizedCache.containsKey(locale)) {
             localizedName = this.localizedCache.get(locale);
         } else {
@@ -184,7 +187,7 @@ public enum Language {
      * @return A Map of all supported languages stored by their localized name.
      */
     public static Map<String, Language> values(Language locale) throws Exception {
-        Map<String, Language> localizedMap = new TreeMap<String, Language>();
+        Map<String, Language> localizedMap = new TreeMap<>();
         for (Language lang : Language.values()) {
             if (lang == Language.AUTO_DETECT) {
                 localizedMap.put(Language.AUTO_DETECT.name(), lang);
@@ -212,7 +215,7 @@ public enum Language {
         /**
          * Detects the language of a supplied String.
          *
-         * @param text The String to detect the language of.
+         * @param targets Targets
          * @return A DetectResult object containing the language, confidence and reliability.
          * @throws Exception on error.
          */
@@ -242,14 +245,13 @@ public enum Language {
         /**
          * Detects the language of a supplied String.
          *
-         * @param text The String to detect the language of.
          * @return A DetectResult object containing the language, confidence and reliability.
          * @throws Exception on error.
          */
         public static String[] execute() throws Exception {
             //Run the basic service validations first
             validateServiceState();
-            String[] codes = new String[0];
+            String[] codes;
 
             final URL url = new URL(SERVICE_URL + (apiKey != null ? PARAM_APP_ID + URLEncoder.encode(apiKey, ENCODING) : ""));
             codes = retrieveStringArr(url);
