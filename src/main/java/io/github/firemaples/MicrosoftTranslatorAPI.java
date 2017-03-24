@@ -129,7 +129,7 @@ public abstract class MicrosoftTranslatorAPI {
             final int responseCode = uc.getResponseCode();
             final String result = inputStreamToString(uc.getInputStream());
             if (responseCode != 200) {
-                throw new Exception("Error from Microsoft Translator API: " + result);
+                throw new Exception("Error retrieving token from Microsoft Translator API (" + responseCode + "): " + result);
             }
             return result;
         } finally {
@@ -139,7 +139,7 @@ public abstract class MicrosoftTranslatorAPI {
         }
     }
 
-    public static void resetToken(){
+    public static void resetToken() {
         token = null;
         tokenExpiration = 0;
     }
@@ -173,7 +173,7 @@ public abstract class MicrosoftTranslatorAPI {
             final int responseCode = uc.getResponseCode();
             final String result = inputStreamToString(uc.getInputStream());
             if (responseCode != 200) {
-                throw new Exception("Error from Microsoft Translator API: " + result);
+                throw new Exception("Error retrieving translation from Microsoft Translator API (" + responseCode + "): " + result);
             }
             return result;
         } finally {
@@ -195,7 +195,7 @@ public abstract class MicrosoftTranslatorAPI {
             final String response = retrieveResponse(url);
             return jsonToString(response);
         } catch (Exception ex) {
-            throw new Exception("[microsoft-translator-api] Error retrieving translation : " + ex.getMessage(), ex);
+            throw new Exception("[microsoft-translator-api] Error retrieving translation: " + ex.getMessage(), ex);
         }
     }
 
@@ -213,7 +213,7 @@ public abstract class MicrosoftTranslatorAPI {
             final String response = retrieveResponse(url);
             return jsonToStringArr(response, jsonProperty);
         } catch (Exception ex) {
-            throw new Exception("[microsoft-translator-api] Error retrieving translation.", ex);
+            throw new Exception("[microsoft-translator-api] Error retrieving translation: " + ex.getMessage(), ex);
         }
     }
 
@@ -306,7 +306,7 @@ public abstract class MicrosoftTranslatorAPI {
                 }
             }
         } catch (Exception ex) {
-            throw new Exception("[microsoft-translator-api] Error reading translation stream.", ex);
+            throw new Exception("[microsoft-translator-api] Error reading translation stream: " + ex.getMessage(), ex);
         }
 
         return outputBuilder.toString();
@@ -325,7 +325,7 @@ public abstract class MicrosoftTranslatorAPI {
         for (Object obj : values) {
             if (obj != null) {
                 value = obj.toString();
-                if(value.length()!=0) {
+                if (value.length() != 0) {
                     list.add(value);
                 }
             }
