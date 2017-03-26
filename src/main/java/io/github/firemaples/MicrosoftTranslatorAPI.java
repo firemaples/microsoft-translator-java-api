@@ -123,6 +123,7 @@ public abstract class MicrosoftTranslatorAPI {
         uc.setRequestMethod("POST");
         uc.setDoOutput(true);
         uc.setRequestProperty(OcpApimSubscriptionKeyHeader, subscriptionKey);
+        uc.setFixedLengthStreamingMode(0);
 
         OutputStreamWriter wr = new OutputStreamWriter(uc.getOutputStream());
         wr.write("");
