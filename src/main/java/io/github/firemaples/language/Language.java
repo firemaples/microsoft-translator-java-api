@@ -36,17 +36,29 @@ import io.github.firemaples.MicrosoftTranslatorAPI;
  * @author Firemaples (add new Azure framework support) [firemaples at gmail.com]
  */
 public enum Language {
+    //https://jsbin.com/musupiv/edit?js,output
+
     AUTO_DETECT(""),
+
+    AFRIKAANS("af"),
     ARABIC("ar"),
+    BANGLA("bn"),
+    BOSNIAN("bs"),
     BULGARIAN("bg"),
+    CANTONESE_TRADITIONAL("yue"),
     CATALAN("ca"),
-    CHINESE_SIMPLIFIED("zh-CHS"),
-    CHINESE_TRADITIONAL("zh-CHT"),
+    //CHINESE_SIMPLIFIED("zh-CHS"),
+    //CHINESE_TRADITIONAL("zh-CHT"),
+    CHINESE_SIMPLIFIED("zh-Hans"),
+    CHINESE_TRADITIONAL("zh-Hant"),
+    CROATIAN("hr"),
     CZECH("cs"),
     DANISH("da"),
     DUTCH("nl"),
     ENGLISH("en"),
     ESTONIAN("et"),
+    FIJIAN("fj"),
+    FILIPINO("fil"),
     FINNISH("fi"),
     FRENCH("fr"),
     GERMAN("de"),
@@ -59,25 +71,39 @@ public enum Language {
     INDONESIAN("id"),
     ITALIAN("it"),
     JAPANESE("ja"),
+    KISWAHILI("sw"),
+    KLINGON("tlh"),
     KOREAN("ko"),
     LATVIAN("lv"),
     LITHUANIAN("lt"),
+    MALAGASY("mg"),
     MALAY("ms"),
-    NORWEGIAN("no"),
+    MALTESE("mt"),
+    NORWEGIAN("nb"),
     PERSIAN("fa"),
     POLISH("pl"),
     PORTUGUESE("pt"),
+    QUERÉTARO_OTOMI("otq"),
     ROMANIAN("ro"),
     RUSSIAN("ru"),
+    SAMOAN("sm"),
+    SERBIAN_CYRILLIC("sr-Cyrl"),
+    SERBIAN_LATIN("sr-Latn"),
     SLOVAK("sk"),
     SLOVENIAN("sl"),
     SPANISH("es"),
     SWEDISH("sv"),
+    TAHITIAN("ty"),
     THAI("th"),
+    TONGAN("to"),
     TURKISH("tr"),
     UKRAINIAN("uk"),
     URDU("ur"),
-    VIETNAMESE("vi");
+    VIETNAMESE("vi"),
+    WELSH("cy"),
+    YUCATEC_MAYA("yua");
+
+
 
     /**
      * Microsoft's String representation of this language.
