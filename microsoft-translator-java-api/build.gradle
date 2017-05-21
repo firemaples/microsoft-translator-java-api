@@ -13,7 +13,7 @@ ext {
     siteUrl = 'https://github.com/firemaples/microsoft-translator-java-api'
     gitUrl = 'https://github.com/firemaples/microsoft-translator-java-api.git'
 
-    libraryVersion = '0.8.3.1'
+    libraryVersion = '0.8.4'
 
     developerId = 'firemaples'
     developerName = 'Louis Chen'
@@ -58,5 +58,6 @@ task fatJar(type: Jar) {
 //sourceCompatibility = "1.7"
 //targetCompatibility = "1.7"
 
+//Before running 'fatJar', comment these two lines
 apply from: '../installv1.gradle'
 apply from: '../bintrayv1.gradle'
