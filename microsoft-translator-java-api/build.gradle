@@ -13,7 +13,7 @@ ext {
     siteUrl = 'https://github.com/firemaples/microsoft-translator-java-api'
     gitUrl = 'https://github.com/firemaples/microsoft-translator-java-api.git'
 
-    libraryVersion = '0.8.4.1'
+    libraryVersion = '0.8.5'
 
     developerId = 'firemaples'
     developerName = 'Louis Chen'
