@@ -76,6 +76,7 @@ Download this project
 Comment these two lines in ./microsoft-translator-java-api/build.gradle
 
 >    apply from: '../installv1.gradle'
+
 >    apply from: '../bintrayv1.gradle'
 
 Run following command in the project folder
