@@ -2,6 +2,7 @@ microsoft-translator-java-api
 ===========
 [![GitHub version](https://badge.fury.io/gh/firemaples%2Fmicrosoft-translator-java-api.svg)](https://badge.fury.io/gh/firemaples%2Fmicrosoft-translator-java-api)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.firemaples/microsoft-translator-java-api.svg)](https://oss.sonatype.org/content/repositories/releases/io/github/firemaples/microsoft-translator-java-api/)
+[ ![Bintray](https://api.bintray.com/packages/firemaples/maven/microsoft-translator-java-api/images/download.svg) ](https://bintray.com/firemaples/maven/microsoft-translator-java-api/_latestVersion)
 
 Provides a Java wrapper around the Microsoft Translator API aka Bing Translator. 
 
