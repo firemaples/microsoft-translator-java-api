@@ -1,6 +1,6 @@
 /*
  * microsoft-translator-java-api
- * 
+ *
  * Copyright 2012 Jonathan Griggs [jonathan.griggs at gmail.com].
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,8 +17,6 @@
  */
 package io.github.firemaples.sentence;
 
-import io.github.firemaples.language.Language;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -28,7 +26,11 @@ import org.junit.rules.ExpectedException;
 import java.net.URL;
 import java.util.Properties;
 
+import io.github.firemaples.language.Language;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Firemaples (add new Azure framework support) [firemaples at gmail.com]
@@ -67,6 +69,15 @@ public class BreakSentencesTest {
     }
 
     @Test
+    public void testBreakSentences_UsingSSL() throws Exception {
+        BreakSentences.setUsingSSL(true);
+        assertTrue(BreakSentences.isUsingSSL());
+        testBreakSentences();
+        BreakSentences.setUsingSSL(false);
+        assertFalse(BreakSentences.isUsingSSL());
+    }
+
+    @Test
     public void testBreakSentences_AutoDetect() throws Exception {
         exception.expect(RuntimeException.class);
         exception.expectMessage("BreakSentences does not support AUTO_DETECT Langauge. Please specify the origin language");
@@ -86,7 +97,7 @@ public class BreakSentencesTest {
         BreakSentences.resetToken();
         BreakSentences.setSubscriptionKey("Wrong");
         exception.expect(Exception.class);
-        exception.expectMessage("Server returned HTTP response code: 401");
+        exception.expectMessage("[microsoft-translator-api] Error retrieving translation : cannot retry due to server authentication, in streaming mode");
         BreakSentences.execute("This is a sentence. That is a sentence. There are hopefully 3 sentences detected.", Language.ENGLISH);
     }
 
@@ -133,7 +144,7 @@ public class BreakSentencesTest {
                         + "significantly larger, even in nominal terms, than those handed out five years ago in 2004, when the "
                         + "City was entering the credit boom. Barclays and JP Morgan declined to comment."
                 , Language.ENGLISH);
-        assertEquals(28, results.length);
+        assertEquals(29, results.length);
     }
 
     @Test

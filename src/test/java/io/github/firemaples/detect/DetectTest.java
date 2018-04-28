@@ -1,6 +1,6 @@
 /*
  * microsoft-translator-java-api
- * 
+ *
  * Copyright 2012 Jonathan Griggs [jonathan.griggs at gmail.com].
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,6 +29,8 @@ import java.util.Properties;
 import io.github.firemaples.language.Language;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Unit Tests for the Detect class
@@ -65,6 +67,15 @@ public class DetectTest {
     }
 
     @Test
+    public void testDetectEnglish_UsingSSL() throws Exception {
+        Detect.setUsingSSL(true);
+        assertTrue(Detect.isUsingSSL());
+        testDetectEnglish();
+        Detect.setUsingSSL(false);
+        assertFalse(Detect.isUsingSSL());
+    }
+
+    @Test
     public void testDetectFrench() throws Exception {
         assertEquals(Language.FRENCH, Detect.execute("Salut tout le monde"));
     }
@@ -96,7 +107,7 @@ public class DetectTest {
         Detect.resetToken();
         Detect.setSubscriptionKey("wrong_key");
         exception.expect(Exception.class);
-        exception.expectMessage("[microsoft-translator-api] Error retrieving translation : Server returned HTTP response code: 401 for URL: https://api.cognitive.microsoft.com/sts/v1.0/issueToken");
+        exception.expectMessage("[microsoft-translator-api] Error retrieving translation: cannot retry due to server authentication, in streaming mode");
         Detect.execute("전 세계 여러분 안녕하세요");
     }
 
@@ -122,7 +133,7 @@ public class DetectTest {
         Detect.setSubscriptionKey("wrong_key");
         String[] texts = {"Hello world!"};
         exception.expect(Exception.class);
-        exception.expectMessage("[microsoft-translator-api] Error retrieving translation.");
+        exception.expectMessage("[microsoft-translator-api] Error retrieving translation: cannot retry due to server authentication, in streaming mode");
         Detect.execute(texts);
     }
 

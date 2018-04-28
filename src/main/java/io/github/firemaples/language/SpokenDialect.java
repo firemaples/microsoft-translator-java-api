@@ -1,6 +1,6 @@
 /*
  * microsoft-translator-java-api
- * 
+ *
  * Copyright 2012 Jonathan Griggs [jonathan.griggs at gmail.com].
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -107,7 +107,7 @@ public enum SpokenDialect {
         SpokenDialectService.setSubscriptionKey(pSubscriptionKey);
     }
 
-    public static void resetToken(){
+    public static void resetToken() {
         SpokenDialectService.resetToken();
     }
 
@@ -157,7 +157,7 @@ public enum SpokenDialect {
 
 
     private final static class SpokenDialectService extends MicrosoftTranslatorAPI {
-        private static final String SERVICE_URL = "http://api.microsofttranslator.com/V2/Ajax.svc/GetLanguageNames?";
+        private static final String SERVICE_URL = "api.microsofttranslator.com/V2/Ajax.svc/GetLanguageNames?";
 
         /**
          * Detects the language of a supplied String.
@@ -176,7 +176,7 @@ public enum SpokenDialect {
 
             final String targetString = buildStringArrayParam(SpokenDialect.values());
 
-            final URL url = new URL(SERVICE_URL
+            final URL url = new URL(getProtocol() + SERVICE_URL
                     + (apiKey != null ? PARAM_APP_ID + URLEncoder.encode(apiKey, ENCODING) : "")
                     + PARAM_LOCALE + URLEncoder.encode(locale.toString(), ENCODING)
                     + PARAM_LANGUAGE_CODES + URLEncoder.encode(targetString, ENCODING));

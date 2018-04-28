@@ -1,6 +1,6 @@
 /*
  * microsoft-translator-java-api
- * 
+ *
  * Copyright 2012 Jonathan Griggs [jonathan.griggs at gmail.com].
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,7 +26,11 @@ import org.junit.rules.ExpectedException;
 import java.net.URL;
 import java.util.Properties;
 
+import io.github.firemaples.MicrosoftTranslatorAPI;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Jonathan Griggs [jonathan.griggs at gmail.com]
@@ -75,7 +79,7 @@ public class SpokenDialectTest {
         Language locale = Language.ENGLISH;
 
         exception.expect(Exception.class);
-        exception.expectMessage("[microsoft-translator-api] Error retrieving translation.");
+        exception.expectMessage("[microsoft-translator-api] Error retrieving translation: cannot retry due to server authentication, in streaming mode");
         SpokenDialect.FRENCH_CANADA.getName(locale);
     }
 
@@ -127,6 +131,15 @@ public class SpokenDialectTest {
         expResult = "Anglais (Inde)";
         result = SpokenDialect.ENGLISH_INDIA.getName(locale);
         assertEquals(expResult, result);
+    }
+
+    @Test
+    public void testGetNameLocalized_UsingSSL() throws Exception {
+        MicrosoftTranslatorAPI.setUsingSSL(true);
+        assertTrue(MicrosoftTranslatorAPI.isUsingSSL());
+        testGetNameLocalized();
+        MicrosoftTranslatorAPI.setUsingSSL(false);
+        assertFalse(MicrosoftTranslatorAPI.isUsingSSL());
     }
 
     @Test

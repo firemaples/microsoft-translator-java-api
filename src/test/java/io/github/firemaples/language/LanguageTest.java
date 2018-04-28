@@ -1,6 +1,6 @@
 /*
  * microsoft-translator-java-api
- * 
+ *
  * Copyright 2012 Jonathan Griggs [jonathan.griggs at gmail.com].
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,7 +28,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import io.github.firemaples.sentence.BreakSentences;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Jonathan Griggs [jonathan.griggs at gmail.com]
@@ -82,6 +86,15 @@ public class LanguageTest {
     }
 
     @Test
+    public void testFromString_UsingSSL() {
+        BreakSentences.setUsingSSL(true);
+        assertTrue(BreakSentences.isUsingSSL());
+        testFromString();
+        BreakSentences.setUsingSSL(false);
+        assertFalse(BreakSentences.isUsingSSL());
+    }
+
+    @Test
     public void testGetLanguage_NoKey() throws Exception {
         Language.setSubscriptionKey(null);
         Language locale = Language.PERSIAN;
@@ -91,7 +104,7 @@ public class LanguageTest {
         Language.FRENCH.getName(locale);
     }
 
-//    @Ignore("Should be fixed")
+    //    @Ignore("Should be fixed")
     @Test
     public void testGetLanguage_WrongKey() throws Exception {
         Language.resetToken();
@@ -99,7 +112,7 @@ public class LanguageTest {
         Language locale = Language.PERSIAN;
 
         exception.expect(Exception.class);
-        exception.expectMessage("[microsoft-translator-api] Error retrieving translation.");
+        exception.expectMessage("[microsoft-translator-api] Error retrieving translation: cannot retry due to server authentication, in streaming mode");
         Language.FRENCH.getName(locale);
     }
 
@@ -176,6 +189,6 @@ public class LanguageTest {
             System.out.println(langName);
         }
          */
-        assertEquals(42, result.size());
+        assertEquals(61, result.size());
     }
 }

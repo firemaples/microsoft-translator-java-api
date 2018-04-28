@@ -1,6 +1,6 @@
 /*
  * microsoft-translator-java-api
- * 
+ *
  * Copyright 2012 Jonathan Griggs [jonathan.griggs at gmail.com].
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -40,9 +40,14 @@ import java.net.URL;
  * @author Firemaples (add new Azure framework support) [firemaples at gmail.com]
  */
 public abstract class MicrosoftTranslatorAPI {
+    //Protocol type
+    protected static final String PROTOCOL_HTTP = "http://";
+    protected static final String PROTOCOL_HTTPS = "https://";
+
     //Encoding type
     protected static final String ENCODING = "UTF-8";
 
+    protected static String protocol = PROTOCOL_HTTP;
     protected static String apiKey;
     @SuppressWarnings("FieldCanBeLocal")
     private static String DatamarketAccessUri = "https://api.cognitive.microsoft.com/sts/v1.0/issueToken";
@@ -65,6 +70,33 @@ public abstract class MicrosoftTranslatorAPI {
             PARAM_SENTENCES_LANGUAGE = "&language=",
             PARAM_LOCALE = "&locale=",
             PARAM_LANGUAGE_CODES = "&languageCodes=";
+
+    /**
+     * Set using SSL protocol.
+     *
+     * @param usingSSL Using SSL protocol.
+     */
+    public static void setUsingSSL(final boolean usingSSL) {
+        protocol = usingSSL ? PROTOCOL_HTTPS : PROTOCOL_HTTP;
+    }
+
+    /**
+     * Get current protocol.
+     *
+     * @return Current protocol.
+     */
+    protected static String getProtocol() {
+        return protocol;
+    }
+
+    /**
+     * Is using SSL protocol now.
+     *
+     * @return Returns true if using SSL.
+     */
+    public static boolean isUsingSSL() {
+        return PROTOCOL_HTTPS.equals(protocol);
+    }
 
     /**
      * Sets the API key.

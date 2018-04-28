@@ -1,6 +1,6 @@
 /*
  * microsoft-translator-java-api
- * 
+ *
  * Copyright 2012 Jonathan Griggs [jonathan.griggs at gmail.com].
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,8 +17,6 @@
  */
 package io.github.firemaples.speak;
 
-import io.github.firemaples.language.SpokenDialect;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -28,7 +26,11 @@ import org.junit.rules.ExpectedException;
 import java.net.URL;
 import java.util.Properties;
 
+import io.github.firemaples.language.SpokenDialect;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Jonathan Griggs [jonathan.griggs at gmail.com]
@@ -80,6 +82,16 @@ public class SpeakTest {
         String expResult = "http://api.microsofttranslator.com/V2/http.svc/Speak";
         String result = Speak.execute(text, language);
         assertEquals(true, result.contains(expResult));
+    }
+
+
+    @Test
+    public void testGetSpeakUrl_UsingSSL() throws Exception {
+        Speak.setUsingSSL(true);
+        assertTrue(Speak.isUsingSSL());
+        testGetSpeakUrl();
+        Speak.setUsingSSL(false);
+        assertFalse(Speak.isUsingSSL());
     }
 
     @Test
