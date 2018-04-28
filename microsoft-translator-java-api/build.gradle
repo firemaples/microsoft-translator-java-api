@@ -1,6 +1,13 @@
 apply plugin: 'java'
 
 ext {
+    /**
+     * Run commands to upload to https://bintray.com/
+     *
+     * ./gradlew install
+     * gradlew bintrayUpload
+     */
+
     bintrayRepo = 'maven'
     bintrayName = 'microsoft-translator-java-api'
 
@@ -13,7 +20,7 @@ ext {
     siteUrl = 'https://github.com/firemaples/microsoft-translator-java-api'
     gitUrl = 'https://github.com/firemaples/microsoft-translator-java-api.git'
 
-    libraryVersion = '0.8.5'
+    libraryVersion = '0.8.6'
 
     developerId = 'firemaples'
     developerName = 'Louis Chen'
