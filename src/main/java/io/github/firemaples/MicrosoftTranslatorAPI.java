@@ -17,6 +17,10 @@
  */
 package io.github.firemaples;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -25,8 +29,12 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import io.github.firemaples.utils.JsonUtil;
+import io.github.firemaples.utils.TypeReference;
 
 /**
  * MicrosoftAPI
@@ -39,7 +47,7 @@ import java.net.URL;
  * @author Jonathan Griggs
  * @author Firemaples (add new Azure framework support) [firemaples at gmail.com]
  */
-public abstract class MicrosoftTranslatorAPI {
+public abstract class MicrosoftTranslatorAPI<RQ, RP> {
     //Protocol type
     protected static final String PROTOCOL_HTTP = "http://";
     protected static final String PROTOCOL_HTTPS = "https://";
@@ -70,6 +78,12 @@ public abstract class MicrosoftTranslatorAPI {
             PARAM_SENTENCES_LANGUAGE = "&language=",
             PARAM_LOCALE = "&locale=",
             PARAM_LANGUAGE_CODES = "&languageCodes=";
+
+    private JsonUtil<RP> jsonUtil;
+
+    public MicrosoftTranslatorAPI() {
+        jsonUtil = new JsonUtil<>();
+    }
 
     /**
      * Set using SSL protocol.
@@ -209,6 +223,40 @@ public abstract class MicrosoftTranslatorAPI {
             if (responseCode != 200) {
                 throw new Exception("Error retrieving translation from Microsoft Translator API (" + responseCode + "): " + result);
             }
+            return result;
+        } finally {
+            uc.disconnect();
+        }
+    }
+
+    protected String toJsonString(Object object){
+        return jsonUtil.writeJson(object);
+    }
+
+    protected RP retrieveResponseV3(URL url, RQ requestBody, TypeReference<RP> type) throws Exception {
+        HttpURLConnection uc = (HttpURLConnection) url.openConnection();
+        uc.setRequestProperty("Content-Type", "application/json");
+        uc.setRequestMethod("POST");
+        uc.setDoOutput(true);
+        uc.setRequestProperty(OcpApimSubscriptionKeyHeader, subscriptionKey);
+//        uc.setFixedLengthStreamingMode(0);
+
+        String json = toJsonString(requestBody);
+
+        OutputStreamWriter wr = new OutputStreamWriter(uc.getOutputStream());
+        wr.write(json);
+        wr.flush();
+
+        try {
+            final int responseCode = uc.getResponseCode();
+            final String resultString = inputStreamToString(uc.getInputStream());
+            if (responseCode != 200) {
+                throw new Exception("Error retrieving token from Microsoft Translator API (" + responseCode + "): " + resultString);
+            }
+
+            //noinspection UnnecessaryLocalVariable
+            RP result = jsonUtil.parseJson(resultString, type);
+
             return result;
         } finally {
             uc.disconnect();

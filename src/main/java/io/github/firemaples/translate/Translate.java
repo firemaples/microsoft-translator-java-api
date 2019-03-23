@@ -17,11 +17,16 @@
  */
 package io.github.firemaples.translate;
 
+import java.lang.reflect.Type;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.List;
 
 import io.github.firemaples.MicrosoftTranslatorAPI;
 import io.github.firemaples.language.Language;
+import io.github.firemaples.translate.models.TranslationRequest;
+import io.github.firemaples.translate.models.TranslationResult;
+import io.github.firemaples.utils.TypeReference;
 
 /**
  * Translate
@@ -33,9 +38,10 @@ import io.github.firemaples.language.Language;
  * @author Jonathan Griggs [jonathan.griggs at gmail.com]
  * @author Firemaples (add new Azure framework support) [firemaples at gmail.com]
  */
-public final class Translate extends MicrosoftTranslatorAPI {
+public final class Translate extends MicrosoftTranslatorAPI<TranslationRequest, TranslationResult> {
+    private static Translate instance = new Translate();
 
-    private static final String SERVICE_URL = "api.microsofttranslator.com/V2/Ajax.svc/Translate?";
+    private static final String SERVICE_URL = "api.cognitive.microsofttranslator.com/translate?api-version=3.0";
     private static final String ARRAY_SERVICE_URL = "api.microsofttranslator.com/V2/Ajax.svc/TranslateArray?";
     private static final String ARRAY_JSON_OBJECT_PROPERTY = "TranslatedText";
 
@@ -53,18 +59,27 @@ public final class Translate extends MicrosoftTranslatorAPI {
      * @throws Exception on error.
      */
     public static String execute(final String text, final Language from, final Language to) throws Exception {
-        //Run the basic service validations first
+//        //Run the basic service validations first
         validateServiceState(text);
-        final String params =
-                (apiKey != null ? PARAM_APP_ID + URLEncoder.encode(apiKey, ENCODING) : "")
-                        + PARAM_FROM_LANG + URLEncoder.encode(from.toString(), ENCODING)
-                        + PARAM_TO_LANG + URLEncoder.encode(to.toString(), ENCODING)
-                        + PARAM_TEXT_SINGLE + URLEncoder.encode(text, ENCODING);
+//        final String params =
+//                (apiKey != null ? PARAM_APP_ID + URLEncoder.encode(apiKey, ENCODING) : "")
+//                        + PARAM_FROM_LANG + URLEncoder.encode(from.toString(), ENCODING)
+//                        + PARAM_TO_LANG + URLEncoder.encode(to.toString(), ENCODING)
+//                        + PARAM_TEXT_SINGLE + URLEncoder.encode(text, ENCODING);
+//
+//        final URL url = new URL(getProtocol() + SERVICE_URL + params);
+//        //noinspection UnnecessaryLocalVariable
+//        final String response = retrieveString(url);
+//        return response;
 
-        final URL url = new URL(getProtocol() + SERVICE_URL + params);
-        //noinspection UnnecessaryLocalVariable
-        final String response = retrieveString(url);
-        return response;
+        TranslationResult result = _execute(from, to, text);
+        if (result != null && result.size() > 0) {
+            List<TranslationResult.Result> translations = result.get(0).translations;
+            if (translations != null && translations.size() > 0) {
+                return translations.get(0).text;
+            }
+        }
+        throw new IllegalStateException("Parsing result failed");
     }
 
     /**
@@ -96,16 +111,31 @@ public final class Translate extends MicrosoftTranslatorAPI {
     public static String[] execute(final String[] texts, final Language from, final Language to) throws Exception {
         //Run the basic service validations first
         validateServiceState(texts);
-        final String params =
-                (apiKey != null ? PARAM_APP_ID + URLEncoder.encode(apiKey, ENCODING) : "")
-                        + PARAM_FROM_LANG + URLEncoder.encode(from.toString(), ENCODING)
-                        + PARAM_TO_LANG + URLEncoder.encode(to.toString(), ENCODING)
-                        + PARAM_TEXT_ARRAY + URLEncoder.encode(buildStringArrayParam(texts), ENCODING);
+//        final String params =
+//                (apiKey != null ? PARAM_APP_ID + URLEncoder.encode(apiKey, ENCODING) : "")
+//                        + PARAM_FROM_LANG + URLEncoder.encode(from.toString(), ENCODING)
+//                        + PARAM_TO_LANG + URLEncoder.encode(to.toString(), ENCODING)
+//                        + PARAM_TEXT_ARRAY + URLEncoder.encode(buildStringArrayParam(texts), ENCODING);
+//
+//        final URL url = new URL(getProtocol() + ARRAY_SERVICE_URL + params);
+//        //noinspection UnnecessaryLocalVariable
+//        final String[] response = retrieveStringArr(url, ARRAY_JSON_OBJECT_PROPERTY);
+//        return response;
+        TranslationResult result = _execute(from, to, texts);
 
-        final URL url = new URL(getProtocol() + ARRAY_SERVICE_URL + params);
-        //noinspection UnnecessaryLocalVariable
-        final String[] response = retrieveStringArr(url, ARRAY_JSON_OBJECT_PROPERTY);
-        return response;
+        if (result != null && result.size() > 0) {
+            String[] resultArr = new String[result.size()];
+            for (int i = 0; i < result.size(); i++) {
+                List<TranslationResult.Result> translations = result.get(i).translations;
+                if (translations != null && translations.size() > 0) {
+                    resultArr[i] = translations.get(0).text;
+                } else {
+                    resultArr[i] = "";
+                }
+            }
+            return resultArr;
+        }
+        throw new IllegalStateException("Parsing result failed");
     }
 
     /**
@@ -126,22 +156,36 @@ public final class Translate extends MicrosoftTranslatorAPI {
         return execute(texts, Language.AUTO_DETECT, to);
     }
 
+    private static TranslationResult _execute(final Language from, final Language to, String... texts) throws Exception {
+        //Run the basic service validations first
+//        validateServiceState(texts);
+        final String params =
+                PARAM_FROM_LANG + URLEncoder.encode(from.toString(), ENCODING)
+                        + PARAM_TO_LANG + URLEncoder.encode(to.toString(), ENCODING);
+
+        final URL url = new URL(PROTOCOL_HTTPS + SERVICE_URL + params);
+        //noinspection UnnecessaryLocalVariable
+        TranslationResult result = instance.retrieveResponseV3(url, TranslationRequest.build(texts), new TypeReference<TranslationResult>() {
+        });
+        return result;
+    }
+
     private static void validateServiceState(final String[] texts) throws Exception {
-        int length = 0;
-        for (String text : texts) {
-            length += text.getBytes(ENCODING).length;
+        if (texts.length > 100) {
+            throw new RuntimeException("TEXT_COUNT_OVER_LIMIT - Microsoft Translator (Translate) can handle up to 100 texts per request");
         }
-        if (length > 10240) {
-            throw new RuntimeException("TEXT_TOO_LARGE - Microsoft Translator (Translate) can handle up to 10,240 bytes per request");
+        String json = instance.toJsonString(TranslationRequest.build(texts));
+        if (json.length() > 5000) {
+            throw new RuntimeException("TEXT_TOO_LARGE - Microsoft Translator (Translate) can handle up to 5,000 characters per request");
         }
         validateServiceState();
     }
 
 
     private static void validateServiceState(final String text) throws Exception {
-        final int byteLength = text.getBytes(ENCODING).length;
-        if (byteLength > 10240) {
-            throw new RuntimeException("TEXT_TOO_LARGE - Microsoft Translator (Translate) can handle up to 10,240 bytes per request");
+        String json = instance.toJsonString(TranslationRequest.build(text));
+        if (json.length() > 5000) {
+            throw new RuntimeException("TEXT_TOO_LARGE - Microsoft Translator (Translate) can handle up to 5,000 characters per request");
         }
         validateServiceState();
     }
