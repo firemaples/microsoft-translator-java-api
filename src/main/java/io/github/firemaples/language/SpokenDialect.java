@@ -32,6 +32,7 @@ import io.github.firemaples.MicrosoftTranslatorAPI;
  * @author Jonathan Griggs [jonathan.griggs at gmail.com]
  * @author Firemaples (add new Azure framework support) [firemaples at gmail.com]
  */
+@Deprecated
 public enum SpokenDialect {
     CATALAN_SPAIN("ca-es"),
     DANISH_DENMARK("da-dk"),

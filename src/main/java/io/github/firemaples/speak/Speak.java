@@ -34,6 +34,7 @@ import io.github.firemaples.language.SpokenDialect;
  *
  * @author Firemaples (add new Azure framework support) [firemaples at gmail.com]
  */
+@Deprecated
 public final class Speak extends MicrosoftTranslatorAPI {
     private static final String SERVICE_URL = "api.microsofttranslator.com/V2/Ajax.svc/Speak?";
 
