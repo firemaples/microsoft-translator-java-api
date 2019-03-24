@@ -15,11 +15,11 @@ import java.lang.reflect.Type;
  * (any such generic interface would do, as long as it forces a method
  * with generic type to be implemented).
  * to ensure that a Type argument is indeed given.
- * <p/>
+ * <p>-</p>
  * Usage is by sub-classing: here is one way to instantiate reference
- * to generic type <code>List&lt;Integer></code>:
+ * to generic type <code>List&lt;Integer&gt;</code>:
  * <pre>
- *  TypeReference ref = new TypeReference&lt;List&lt;Integer>>() { };
+ *  TypeReference ref = new TypeReference&lt;List&lt;Integer&gt;&gt;() { };
  * </pre>
  * which can be passed to methods that accept TypeReference.
  */
