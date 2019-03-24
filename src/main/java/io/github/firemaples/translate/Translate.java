@@ -176,7 +176,7 @@ public final class Translate extends MicrosoftTranslatorAPI<TextArrayRequest, Tr
 
         final URL url = new URL(PROTOCOL_HTTPS + SERVICE_URL + params);
         //noinspection UnnecessaryLocalVariable
-        TranslationResult result = instance.retrieveResponseV3(url, TextArrayRequest.build(texts), new TypeReference<TranslationResult>() {
+        TranslationResult result = instance.retrieveResponseV3(url, HTTP_POST, TextArrayRequest.build(texts), new TypeReference<TranslationResult>() {
         });
         return result;
     }

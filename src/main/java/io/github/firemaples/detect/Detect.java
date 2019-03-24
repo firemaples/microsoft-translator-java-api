@@ -18,13 +18,11 @@
 package io.github.firemaples.detect;
 
 import java.net.URL;
-import java.net.URLEncoder;
 
 import io.github.firemaples.MicrosoftTranslatorAPI;
 import io.github.firemaples.language.Language;
 import io.github.firemaples.models.DetectResult;
 import io.github.firemaples.models.TextArrayRequest;
-import io.github.firemaples.models.TranslationResult;
 import io.github.firemaples.utils.TypeReference;
 
 /**
@@ -101,7 +99,7 @@ public final class Detect extends MicrosoftTranslatorAPI<TextArrayRequest, Detec
         validateServiceState(texts);
         final URL url = new URL(PROTOCOL_HTTPS + SERVICE_URL);
         //noinspection UnnecessaryLocalVariable
-        DetectResult result = instance.retrieveResponseV3(url, TextArrayRequest.build(texts), new TypeReference<DetectResult>() {
+        DetectResult result = instance.retrieveResponseV3(url, HTTP_POST, TextArrayRequest.build(texts), new TypeReference<DetectResult>() {
         });
         return result;
     }

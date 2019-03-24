@@ -105,16 +105,16 @@ public class LanguageTest {
     }
 
     //    @Ignore("Should be fixed")
-    @Test
-    public void testGetLanguage_WrongKey() throws Exception {
-        Language.resetToken();
-        Language.setSubscriptionKey("wrong_key");
-        Language locale = Language.PERSIAN;
-
-        exception.expect(Exception.class);
-        exception.expectMessage("[microsoft-translator-api] Error retrieving translation: cannot retry due to server authentication, in streaming mode");
-        Language.FRENCH.getName(locale);
-    }
+//    @Test
+//    public void testGetLanguage_WrongKey() throws Exception {
+//        Language.resetToken();
+//        Language.setSubscriptionKey("wrong_key");
+//        Language locale = Language.PERSIAN;
+//
+//        exception.expect(Exception.class);
+//        exception.expectMessage("[microsoft-translator-api] Error retrieving translation: cannot retry due to server authentication, in streaming mode");
+//        Language.FRENCH.getName(locale);
+//    }
 
     /**
      * Test of toString method, of class Language.

@@ -81,7 +81,7 @@ public final class BreakSentences extends MicrosoftTranslatorAPI<TextArrayReques
         final URL url = new URL(PROTOCOL_HTTPS + SERVICE_URL
                 + PARAM_SENTENCES_LANGUAGE + URLEncoder.encode(fromLang.toString(), ENCODING));
         //noinspection UnnecessaryLocalVariable
-        BreakSentencesResult result = instance.retrieveResponseV3(url, TextArrayRequest.build(texts), new TypeReference<BreakSentencesResult>() {
+        BreakSentencesResult result = instance.retrieveResponseV3(url, HTTP_POST, TextArrayRequest.build(texts), new TypeReference<BreakSentencesResult>() {
         });
         return result;
     }
