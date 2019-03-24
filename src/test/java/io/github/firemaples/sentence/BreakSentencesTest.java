@@ -79,9 +79,11 @@ public class BreakSentencesTest {
 
     @Test
     public void testBreakSentences_AutoDetect() throws Exception {
-        exception.expect(RuntimeException.class);
-        exception.expectMessage("BreakSentences does not support AUTO_DETECT Langauge. Please specify the origin language");
-        BreakSentences.execute("This is a sentence. That is a sentence. There are hopefully 3 sentences detected.", Language.AUTO_DETECT);
+        Integer[] results = BreakSentences.execute("This is a sentence. That is a sentence. There are hopefully 3 sentences detected.", Language.AUTO_DETECT);
+        assertEquals(3, results.length);
+        assertEquals(20, results[0].intValue());
+        assertEquals(20, results[1].intValue());
+        assertEquals(41, results[2].intValue());
     }
 
     @Test
@@ -97,7 +99,7 @@ public class BreakSentencesTest {
         BreakSentences.resetToken();
         BreakSentences.setSubscriptionKey("Wrong");
         exception.expect(Exception.class);
-        exception.expectMessage("[microsoft-translator-api] Error retrieving translation : cannot retry due to server authentication, in streaming mode");
+        exception.expectMessage("Server returned HTTP response code: 401 for URL: https://api.cognitive.microsofttranslator.com/breaksentence?api-version=3.0&language=en");
         BreakSentences.execute("This is a sentence. That is a sentence. There are hopefully 3 sentences detected.", Language.ENGLISH);
     }
 
@@ -241,7 +243,7 @@ public class BreakSentencesTest {
         largeText += " " + largeText;
         largeText += " " + largeText;
         exception.expect(RuntimeException.class);
-        exception.expectMessage("TEXT_TOO_LARGE - Microsoft Translator (BreakSentences) can handle up to 10,240 bytes per request");
+        exception.expectMessage("TEXT_TOO_LARGE - Microsoft Translator (BreakSentences) can handle up to 10,000 characters per array element");
         BreakSentences.execute(largeText.substring(0, 10242), Language.ENGLISH);
 
     }

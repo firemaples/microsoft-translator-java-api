@@ -55,6 +55,7 @@ public class TranslateTest {
             subscriptionKey = System.getProperty("test.api.key").split(",")[1];
         }
         Translate.setSubscriptionKey(subscriptionKey);
+        Translate.setUsingSSL(true);
     }
 
     @After
@@ -71,18 +72,18 @@ public class TranslateTest {
     @Test
     public void testTranslate_SetReferrer() throws Exception {
         Translate.setHttpReferrer("http://localhost:8080");
-        assertEquals("Salut", Translate.execute("Hello", Language.ENGLISH, Language.FRENCH));
+        assertEquals("Bonjour", Translate.execute("Hello", Language.ENGLISH, Language.FRENCH));
     }
 
     @Test
     public void testTranslate_NoApiKey() throws Exception {
         Translate.setHttpReferrer("http://localhost:8080");
-        assertEquals("Salut", Translate.execute("Hello", Language.ENGLISH, Language.FRENCH));
+        assertEquals("Bonjour", Translate.execute("Hello", Language.ENGLISH, Language.FRENCH));
     }
 
     @Test
     public void testTranslate_NoSpace() throws Exception {
-        assertEquals("Salut", Translate.execute("Hello", Language.ENGLISH, Language.FRENCH));
+        assertEquals("Bonjour", Translate.execute("Hello", Language.ENGLISH, Language.FRENCH));
     }
 
     @Test
@@ -98,7 +99,7 @@ public class TranslateTest {
     @Test
     public void testTranslate_HTMLContentType() throws Exception {
         Translate.setContentType("text/html");
-        assertEquals("<hello>Bonjour, mon nom est</hello>", Translate.execute("<hello>Hello, my name is</hello>", Language.AUTO_DETECT, Language.FRENCH));
+        assertEquals("<hello> Bonjour, mon nom est </hello>", Translate.execute("<hello>Hello, my name is</hello>", Language.AUTO_DETECT, Language.FRENCH));
     }
 
     @Test
@@ -161,7 +162,7 @@ public class TranslateTest {
 
     @Test
     public void testTranslate_EnglisthToHebrew_Unicode() throws Exception {
-        assertEquals("מזהה", Translate.execute("ID", Language.ENGLISH, Language.HEBREW));
+        assertEquals("זהה", Translate.execute("ID", Language.ENGLISH, Language.HEBREW));
     }
 
     @Test
@@ -336,7 +337,7 @@ public class TranslateTest {
         largeText += " " + largeText;
         largeText += " " + largeText;
         exception.expect(RuntimeException.class);
-        exception.expectMessage("TEXT_TOO_LARGE - Microsoft Translator (Translate) can handle up to 10,240 bytes per request");
+        exception.expectMessage("TEXT_TOO_LARGE - Microsoft Translator (Translate) can handle up to 5,000 characters per request");
         Translate.execute(largeText.substring(0, 10242), Language.ENGLISH, Language.FRENCH);
 
     }
@@ -346,9 +347,9 @@ public class TranslateTest {
         String[] sourceTexts = {"Hello", "I would like to be translated", "How are you doing today?"};
         String[] translatedTexts = Translate.execute(sourceTexts, Language.ENGLISH, Language.FRENCH);
         assertEquals(3, translatedTexts.length);
-        assertEquals("Salut", translatedTexts[0]);
-        assertEquals("Je tiens à être traduit", translatedTexts[1]);
-        assertEquals("Comment allez-vous faire aujourd'hui ?", translatedTexts[2]);
+        assertEquals("Bonjour", translatedTexts[0]);
+        assertEquals("Je voudrais être traduit", translatedTexts[1]);
+        assertEquals("comment allez-vous aujourd'hui?", translatedTexts[2]);
     }
 
     @Test
@@ -365,9 +366,9 @@ public class TranslateTest {
         String[] sourceTexts = {"Hello", "I would like to be \"translated\"", "How are you doing today?"};
         String[] translatedTexts = Translate.execute(sourceTexts, Language.ENGLISH, Language.FRENCH);
         assertEquals(3, translatedTexts.length);
-        assertEquals("Salut", translatedTexts[0]);
-        assertEquals("Je tiens à être « traduits »", translatedTexts[1]);
-        assertEquals("Comment allez-vous faire aujourd'hui ?", translatedTexts[2]);
+        assertEquals("Bonjour", translatedTexts[0]);
+        assertEquals("Je voudrais être \"traduit\"", translatedTexts[1]);
+        assertEquals("comment allez-vous aujourd'hui?", translatedTexts[2]);
     }
 
     @Test
@@ -375,14 +376,14 @@ public class TranslateTest {
         String[] sourceTexts = {"Hello", "I would like to be translated", "How are you doing today?"};
         String[] translatedTexts = Translate.execute(sourceTexts, Language.FRENCH);
         assertEquals(3, translatedTexts.length);
-        assertEquals("Salut", translatedTexts[0]);
-        assertEquals("Je tiens à être traduit", translatedTexts[1]);
-        assertEquals("Comment allez-vous faire aujourd'hui ?", translatedTexts[2]);
+        assertEquals("Bonjour", translatedTexts[0]);
+        assertEquals("Je voudrais être traduit", translatedTexts[1]);
+        assertEquals("comment allez-vous aujourd'hui?", translatedTexts[2]);
     }
 
     @Test
     public void testLargeLimitArray() throws Exception {
-        String[] sourceTexts = new String[30];
+        String[] sourceTexts = new String[19];
         String largeText = "Figures from the Office for National Statistics (ONS) show that between December and April, "
                 + "the five-month period typically regarded as peak bonus season, those working in the financial "
                 + "intermediation sector received bonuses worth £7.6bn.";
@@ -407,7 +408,7 @@ public class TranslateTest {
             sourceTexts[i] = largeText;
 
         exception.expect(RuntimeException.class);
-        exception.expectMessage("TEXT_TOO_LARGE - Microsoft Translator (Translate) can handle up to 10,240 bytes per request");
+        exception.expectMessage("TEXT_TOO_LARGE - Microsoft Translator (Translate) can handle up to 5,000 characters per request");
         Translate.execute(sourceTexts, Language.ENGLISH, Language.FRENCH);
     }
 
@@ -417,7 +418,7 @@ public class TranslateTest {
         largeText += " " + largeText;
         largeText += " " + largeText;
         exception.expect(RuntimeException.class);
-        exception.expectMessage("TEXT_TOO_LARGE - Microsoft Translator (Translate) can handle up to 10,240 bytes per request");
+        exception.expectMessage("TEXT_TOO_LARGE - Microsoft Translator (Translate) can handle up to 5,000 characters per request");
         Translate.execute(largeText, Language.AUTO_DETECT, Language.ENGLISH);
 
     }

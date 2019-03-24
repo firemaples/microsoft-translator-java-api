@@ -27,6 +27,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
+
+import io.github.firemaples.utils.JsonUtil;
+import io.github.firemaples.utils.TypeReference;
 
 /**
  * MicrosoftAPI
@@ -39,10 +43,14 @@ import java.net.URL;
  * @author Jonathan Griggs
  * @author Firemaples (add new Azure framework support) [firemaples at gmail.com]
  */
-public abstract class MicrosoftTranslatorAPI {
+public abstract class MicrosoftTranslatorAPI<RQ, RP> {
     //Protocol type
     protected static final String PROTOCOL_HTTP = "http://";
     protected static final String PROTOCOL_HTTPS = "https://";
+
+    //Method type
+    protected static final String HTTP_GET = "GET";
+    protected static final String HTTP_POST = "POST";
 
     //Encoding type
     protected static final String ENCODING = "UTF-8";
@@ -69,7 +77,14 @@ public abstract class MicrosoftTranslatorAPI {
             PARAM_SPOKEN_LANGUAGE = "&language=",
             PARAM_SENTENCES_LANGUAGE = "&language=",
             PARAM_LOCALE = "&locale=",
-            PARAM_LANGUAGE_CODES = "&languageCodes=";
+            PARAM_LANGUAGE_CODES = "&languageCodes=",
+            PARAM_SCOPE = "&scope=";
+
+    private JsonUtil<RP> jsonUtil;
+
+    public MicrosoftTranslatorAPI() {
+        jsonUtil = new JsonUtil<>();
+    }
 
     /**
      * Set using SSL protocol.
@@ -209,6 +224,59 @@ public abstract class MicrosoftTranslatorAPI {
             if (responseCode != 200) {
                 throw new Exception("Error retrieving translation from Microsoft Translator API (" + responseCode + "): " + result);
             }
+            return result;
+        } finally {
+            uc.disconnect();
+        }
+    }
+
+    protected String toJsonString(Object object) {
+        return jsonUtil.writeJson(object);
+    }
+
+    protected RP retrieveResponseV3(URL url, String httpMethod, RQ requestBody, TypeReference<RP> type) throws Exception {
+        return retrieveResponseV3(url, httpMethod, requestBody, type, null);
+    }
+
+    protected RP retrieveResponseV3(URL url, String httpMethod, RQ requestBody, TypeReference<RP> type, HashMap<String, String> headers) throws Exception {
+        HttpURLConnection uc = (HttpURLConnection) url.openConnection();
+        uc.setRequestProperty("Content-Type", "application/json");
+        if (headers != null) {
+            for (String key : headers.keySet()) {
+                uc.setRequestProperty(key, headers.get(key));
+            }
+        }
+        if (httpMethod == null) {
+            httpMethod = HTTP_GET;
+        }
+        uc.setRequestMethod(httpMethod);
+        uc.setDoOutput(true);
+        uc.setRequestProperty(OcpApimSubscriptionKeyHeader, subscriptionKey);
+//        uc.setFixedLengthStreamingMode(0);
+
+        if (HTTP_POST.equals(httpMethod)) {
+            String body;
+            if (requestBody != null) {
+                body = toJsonString(requestBody);
+            } else {
+                body = "";
+            }
+
+            OutputStreamWriter wr = new OutputStreamWriter(uc.getOutputStream());
+            wr.write(body);
+            wr.flush();
+        }
+
+        try {
+            final int responseCode = uc.getResponseCode();
+            final String resultString = inputStreamToString(uc.getInputStream());
+            if (responseCode != 200) {
+                throw new Exception("Error retrieving token from Microsoft Translator API (" + responseCode + "): " + resultString);
+            }
+
+            //noinspection UnnecessaryLocalVariable
+            RP result = jsonUtil.parseJson(resultString, type);
+
             return result;
         } finally {
             uc.disconnect();

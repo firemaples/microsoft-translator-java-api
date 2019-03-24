@@ -107,7 +107,7 @@ public class DetectTest {
         Detect.resetToken();
         Detect.setSubscriptionKey("wrong_key");
         exception.expect(Exception.class);
-        exception.expectMessage("[microsoft-translator-api] Error retrieving translation: cannot retry due to server authentication, in streaming mode");
+        exception.expectMessage("Server returned HTTP response code: 401 for URL: https://api.cognitive.microsofttranslator.com/detect?api-version=3.0");
         Detect.execute("전 세계 여러분 안녕하세요");
     }
 
@@ -133,7 +133,7 @@ public class DetectTest {
         Detect.setSubscriptionKey("wrong_key");
         String[] texts = {"Hello world!"};
         exception.expect(Exception.class);
-        exception.expectMessage("[microsoft-translator-api] Error retrieving translation: cannot retry due to server authentication, in streaming mode");
+        exception.expectMessage("Server returned HTTP response code: 401 for URL: https://api.cognitive.microsofttranslator.com/detect?api-version=3.0");
         Detect.execute(texts);
     }
 
@@ -227,7 +227,7 @@ public class DetectTest {
         largeText += " " + largeText;
         largeText += " " + largeText;
         exception.expect(RuntimeException.class);
-        exception.expectMessage("TEXT_TOO_LARGE - Microsoft Translator (Detect) can handle up to 10,240 bytes per request");
+        exception.expectMessage("TEXT_TOO_LARGE - Microsoft Translator (Detect) can handle up to 10,000 characters per array element");
         Detect.execute(largeText.substring(0, 10242));
 
     }

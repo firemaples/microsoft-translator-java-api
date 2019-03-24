@@ -20,12 +20,17 @@ package io.github.firemaples.language;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.github.firemaples.MicrosoftTranslatorAPI;
+import io.github.firemaples.models.DetectResult;
+import io.github.firemaples.models.LanguagesResult;
+import io.github.firemaples.models.TextArrayRequest;
+import io.github.firemaples.utils.TypeReference;
 
 /**
  * Language - an enum of all language codes supported by the Microsoft Translator API
@@ -178,15 +183,29 @@ public enum Language {
                 localizedName = "Auto Detect";
             } else {
                 //If not in the cache, pre-load all the Language names for this locale
-                String[] names = LanguageService.execute(Language.values(), locale);
-                int i = 0;
-                for (Language lang : Language.values()) {
-                    if (lang != Language.AUTO_DETECT) {
-                        lang.localizedCache.put(locale, names[i]);
-                        i++;
+//                String[] names = LanguageService.execute(Language.values(), locale);
+//                int i = 0;
+//                for (Language lang : Language.values()) {
+//                    if (lang != Language.AUTO_DETECT) {
+//                        lang.localizedCache.put(locale, names[i]);
+//                        i++;
+//                    }
+//                }
+//                localizedName = this.localizedCache.get(locale);
+
+                LanguagesResult languagesResult = LanguageService.retrieveResult(locale);
+                if (languagesResult != null && languagesResult.translation != null) {
+                    for (Language lang : Language.values()) {
+                        LanguagesResult.TranslationLanguage resultLang =
+                                languagesResult.translation.get(lang.toString());
+                        if (resultLang != null && resultLang.name != null) {
+                            lang.localizedCache.put(locale, resultLang.name);
+                        }
                     }
+                    localizedName = this.localizedCache.get(locale);
+                } else {
+                    return null;
                 }
-                localizedName = this.localizedCache.get(locale);
             }
         }
         return localizedName;
@@ -230,12 +249,14 @@ public enum Language {
 
     // Flushes the localized name cache for all languages
     public static void flushNameCache() {
-        for (Language lang : Language.values())
+        for (Language lang : Language.values()) {
             lang.flushCache();
+        }
     }
 
-    private final static class LanguageService extends MicrosoftTranslatorAPI {
-        private static final String SERVICE_URL = "api.microsofttranslator.com/V2/Ajax.svc/GetLanguageNames?";
+    private final static class LanguageService extends MicrosoftTranslatorAPI<Void, LanguagesResult> {
+        private static LanguageService instance = new LanguageService();
+        private static final String SERVICE_URL = "api.cognitive.microsofttranslator.com/languages?api-version=3.0";
 
         /**
          * Detects the language of a supplied String.
@@ -244,28 +265,43 @@ public enum Language {
          * @return A DetectResult object containing the language, confidence and reliability.
          * @throws Exception on error.
          */
+        @Deprecated
         public static String[] execute(final Language[] targets, final Language locale) throws Exception {
-            //Run the basic service validations first
-            validateServiceState();
-            String[] localizedNames = new String[0];
-            if (locale == Language.AUTO_DETECT) {
-                return localizedNames;
-            }
-
-            final String targetString = buildStringArrayParam(Language.values());
-
-            final URL url = new URL(getProtocol() + SERVICE_URL
-                    + (apiKey != null ? PARAM_APP_ID + URLEncoder.encode(apiKey, ENCODING) : "")
-                    + PARAM_LOCALE + URLEncoder.encode(locale.toString(), ENCODING)
-                    + PARAM_LANGUAGE_CODES + URLEncoder.encode(targetString, ENCODING));
-            localizedNames = retrieveStringArr(url);
-            return localizedNames;
+//            //Run the basic service validations first
+//            validateServiceState();
+//            String[] localizedNames = new String[0];
+//            if (locale == Language.AUTO_DETECT) {
+//                return localizedNames;
+//            }
+//
+//            final String targetString = buildStringArrayParam(Language.values());
+//
+//            final URL url = new URL(getProtocol() + SERVICE_URL
+//                    + (apiKey != null ? PARAM_APP_ID + URLEncoder.encode(apiKey, ENCODING) : "")
+//                    + PARAM_LOCALE + URLEncoder.encode(locale.toString(), ENCODING)
+//                    + PARAM_LANGUAGE_CODES + URLEncoder.encode(targetString, ENCODING));
+//            localizedNames = retrieveStringArr(url);
+//            return localizedNames;
+            return new String[]{};
         }
 
+        public static LanguagesResult retrieveResult(Language locale) throws Exception {
+            //Run the basic service validations first
+            validateServiceState();
+            final URL url = new URL(PROTOCOL_HTTPS + SERVICE_URL
+                    + PARAM_SCOPE + "translation");
+            HashMap<String, String> headers = new HashMap<>();
+            headers.put("Accept-Language", locale.toString());
+            //noinspection UnnecessaryLocalVariable
+            LanguagesResult result = instance.retrieveResponseV3(url, HTTP_GET, null, new TypeReference<LanguagesResult>() {
+            }, headers);
+            return result;
+        }
     }
 
-    private final static class GetLanguagesForTranslateService extends MicrosoftTranslatorAPI {
-        private static final String SERVICE_URL = "http://api.microsofttranslator.com/V2/Ajax.svc/GetLanguagesForTranslate?";
+    private final static class GetLanguagesForTranslateService extends MicrosoftTranslatorAPI<Void, LanguagesResult> {
+        private static GetLanguagesForTranslateService instance = new GetLanguagesForTranslateService();
+        private static final String SERVICE_URL = "api.cognitive.microsofttranslator.com/languages?api-version=3.0";
 
         /**
          * Detects the language of a supplied String.
@@ -274,14 +310,29 @@ public enum Language {
          * @throws Exception on error.
          */
         public static String[] execute() throws Exception {
-            //Run the basic service validations first
-            validateServiceState();
-            String[] codes;
-
-            final URL url = new URL(SERVICE_URL + (apiKey != null ? PARAM_APP_ID + URLEncoder.encode(apiKey, ENCODING) : ""));
-            codes = retrieveStringArr(url);
-            return codes;
+//            //Run the basic service validations first
+//            validateServiceState();
+//            String[] codes;
+//
+//            final URL url = new URL(SERVICE_URL + (apiKey != null ? PARAM_APP_ID + URLEncoder.encode(apiKey, ENCODING) : ""));
+//            codes = retrieveStringArr(url);
+//            return codes;
+            LanguagesResult result = retrieveResult();
+            if (result != null && result.translation != null) {
+                return result.translation.keySet().toArray(new String[]{});
+            }
+            throw new IllegalStateException("Parsing result failed");
         }
 
+        public static LanguagesResult retrieveResult() throws Exception {
+            //Run the basic service validations first
+            validateServiceState();
+            final URL url = new URL(PROTOCOL_HTTPS + SERVICE_URL
+                    + PARAM_SCOPE + "translation");
+            //noinspection UnnecessaryLocalVariable
+            LanguagesResult result = instance.retrieveResponseV3(url, HTTP_GET, null, new TypeReference<LanguagesResult>() {
+            });
+            return result;
+        }
     }
 }
