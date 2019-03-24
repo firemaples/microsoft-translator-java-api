@@ -17,15 +17,14 @@
  */
 package io.github.firemaples.translate;
 
-import java.lang.reflect.Type;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.List;
 
 import io.github.firemaples.MicrosoftTranslatorAPI;
 import io.github.firemaples.language.Language;
-import io.github.firemaples.translate.models.TranslationRequest;
-import io.github.firemaples.translate.models.TranslationResult;
+import io.github.firemaples.models.TextArrayRequest;
+import io.github.firemaples.models.TranslationResult;
 import io.github.firemaples.utils.TypeReference;
 
 /**
@@ -38,12 +37,12 @@ import io.github.firemaples.utils.TypeReference;
  * @author Jonathan Griggs [jonathan.griggs at gmail.com]
  * @author Firemaples (add new Azure framework support) [firemaples at gmail.com]
  */
-public final class Translate extends MicrosoftTranslatorAPI<TranslationRequest, TranslationResult> {
+public final class Translate extends MicrosoftTranslatorAPI<TextArrayRequest, TranslationResult> {
     private static Translate instance = new Translate();
 
     private static final String SERVICE_URL = "api.cognitive.microsofttranslator.com/translate?api-version=3.0";
-    private static final String ARRAY_SERVICE_URL = "api.microsofttranslator.com/V2/Ajax.svc/TranslateArray?";
-    private static final String ARRAY_JSON_OBJECT_PROPERTY = "TranslatedText";
+//    private static final String ARRAY_SERVICE_URL = "api.microsofttranslator.com/V2/Ajax.svc/TranslateArray?";
+//    private static final String ARRAY_JSON_OBJECT_PROPERTY = "TranslatedText";
 
     //prevent instantiation
     private Translate() {
@@ -60,7 +59,7 @@ public final class Translate extends MicrosoftTranslatorAPI<TranslationRequest, 
      */
     public static String execute(final String text, final Language from, final Language to) throws Exception {
 //        //Run the basic service validations first
-        validateServiceState(text);
+//        validateServiceState(text);
 //        final String params =
 //                (apiKey != null ? PARAM_APP_ID + URLEncoder.encode(apiKey, ENCODING) : "")
 //                        + PARAM_FROM_LANG + URLEncoder.encode(from.toString(), ENCODING)
@@ -72,9 +71,9 @@ public final class Translate extends MicrosoftTranslatorAPI<TranslationRequest, 
 //        final String response = retrieveString(url);
 //        return response;
 
-        TranslationResult result = _execute(from, to, text);
+        TranslationResult result = retrieveResult(from, to, text);
         if (result != null && result.size() > 0) {
-            List<TranslationResult.Result> translations = result.get(0).translations;
+            List<TranslationResult.Translation> translations = result.get(0).translations;
             if (translations != null && translations.size() > 0) {
                 return translations.get(0).text;
             }
@@ -110,7 +109,7 @@ public final class Translate extends MicrosoftTranslatorAPI<TranslationRequest, 
      */
     public static String[] execute(final String[] texts, final Language from, final Language to) throws Exception {
         //Run the basic service validations first
-        validateServiceState(texts);
+//        validateServiceState(texts);
 //        final String params =
 //                (apiKey != null ? PARAM_APP_ID + URLEncoder.encode(apiKey, ENCODING) : "")
 //                        + PARAM_FROM_LANG + URLEncoder.encode(from.toString(), ENCODING)
@@ -121,12 +120,12 @@ public final class Translate extends MicrosoftTranslatorAPI<TranslationRequest, 
 //        //noinspection UnnecessaryLocalVariable
 //        final String[] response = retrieveStringArr(url, ARRAY_JSON_OBJECT_PROPERTY);
 //        return response;
-        TranslationResult result = _execute(from, to, texts);
+        TranslationResult result = retrieveResult(from, to, texts);
 
         if (result != null && result.size() > 0) {
             String[] resultArr = new String[result.size()];
             for (int i = 0; i < result.size(); i++) {
-                List<TranslationResult.Result> translations = result.get(i).translations;
+                List<TranslationResult.Translation> translations = result.get(i).translations;
                 if (translations != null && translations.size() > 0) {
                     resultArr[i] = translations.get(0).text;
                 } else {
@@ -156,16 +155,28 @@ public final class Translate extends MicrosoftTranslatorAPI<TranslationRequest, 
         return execute(texts, Language.AUTO_DETECT, to);
     }
 
-    private static TranslationResult _execute(final Language from, final Language to, String... texts) throws Exception {
+    /**
+     * Translates an array of texts from a given Language to another given Language using Microsoft Translator's TranslateArray
+     * service
+     * <p>
+     * Note that the Microsoft Translator expects all source texts to be of the SAME language.
+     *
+     * @param from  The language code to translate from.
+     * @param to    The language code to translate to.
+     * @param texts The Strings Array to translate.
+     * @return The translated Strings Array[].
+     * @throws Exception on error.
+     */
+    public static TranslationResult retrieveResult(final Language from, final Language to, String... texts) throws Exception {
         //Run the basic service validations first
-//        validateServiceState(texts);
+        validateServiceState(texts);
         final String params =
                 PARAM_FROM_LANG + URLEncoder.encode(from.toString(), ENCODING)
                         + PARAM_TO_LANG + URLEncoder.encode(to.toString(), ENCODING);
 
         final URL url = new URL(PROTOCOL_HTTPS + SERVICE_URL + params);
         //noinspection UnnecessaryLocalVariable
-        TranslationResult result = instance.retrieveResponseV3(url, TranslationRequest.build(texts), new TypeReference<TranslationResult>() {
+        TranslationResult result = instance.retrieveResponseV3(url, TextArrayRequest.build(texts), new TypeReference<TranslationResult>() {
         });
         return result;
     }
@@ -174,7 +185,7 @@ public final class Translate extends MicrosoftTranslatorAPI<TranslationRequest, 
         if (texts.length > 100) {
             throw new RuntimeException("TEXT_COUNT_OVER_LIMIT - Microsoft Translator (Translate) can handle up to 100 texts per request");
         }
-        String json = instance.toJsonString(TranslationRequest.build(texts));
+        String json = instance.toJsonString(TextArrayRequest.build(texts));
         if (json.length() > 5000) {
             throw new RuntimeException("TEXT_TOO_LARGE - Microsoft Translator (Translate) can handle up to 5,000 characters per request");
         }
@@ -182,13 +193,13 @@ public final class Translate extends MicrosoftTranslatorAPI<TranslationRequest, 
     }
 
 
-    private static void validateServiceState(final String text) throws Exception {
-        String json = instance.toJsonString(TranslationRequest.build(text));
-        if (json.length() > 5000) {
-            throw new RuntimeException("TEXT_TOO_LARGE - Microsoft Translator (Translate) can handle up to 5,000 characters per request");
-        }
-        validateServiceState();
-    }
+//    private static void validateServiceState(final String text) throws Exception {
+//        String json = instance.toJsonString(TextArrayRequest.build(text));
+//        if (json.length() > 5000) {
+//            throw new RuntimeException("TEXT_TOO_LARGE - Microsoft Translator (Translate) can handle up to 5,000 characters per request");
+//        }
+//        validateServiceState();
+//    }
 
 
 }

@@ -22,6 +22,10 @@ import java.net.URLEncoder;
 
 import io.github.firemaples.MicrosoftTranslatorAPI;
 import io.github.firemaples.language.Language;
+import io.github.firemaples.models.DetectResult;
+import io.github.firemaples.models.TextArrayRequest;
+import io.github.firemaples.models.TranslationResult;
+import io.github.firemaples.utils.TypeReference;
 
 /**
  * Detect
@@ -33,9 +37,10 @@ import io.github.firemaples.language.Language;
  * @author Jonathan Griggs [jonathan.griggs at gmail.com]
  * @author Firemaples (add new Azure framework support) [firemaples at gmail.com]
  */
-public final class Detect extends MicrosoftTranslatorAPI {
-    private static final String SERVICE_URL = "api.microsofttranslator.com/V2/Ajax.svc/Detect?";
-    private static final String ARRAY_SERVICE_URL = "api.microsofttranslator.com/V2/Ajax.svc/DetectArray?";
+public final class Detect extends MicrosoftTranslatorAPI<TextArrayRequest, DetectResult> {
+    private static Detect instance = new Detect();
+    private static final String SERVICE_URL = "api.cognitive.microsofttranslator.com/detect?api-version=3.0";
+//    private static final String ARRAY_SERVICE_URL = "api.microsofttranslator.com/V2/Ajax.svc/DetectArray?";
 
     // prevent instantiation
     private Detect() {
@@ -49,14 +54,19 @@ public final class Detect extends MicrosoftTranslatorAPI {
      * @throws Exception on error.
      */
     public static Language execute(final String text) throws Exception {
-        //Run the basic service validations first
-        validateServiceState(text);
-        final URL url = new URL(getProtocol() + SERVICE_URL
-                + (apiKey != null ? PARAM_APP_ID + URLEncoder.encode(apiKey, ENCODING) : "")
-                + PARAM_TEXT_SINGLE + URLEncoder.encode(text, ENCODING));
-
-        final String response = retrieveString(url);
-        return Language.fromString(response);
+//        //Run the basic service validations first
+//        validateServiceState(text);
+//        final URL url = new URL(getProtocol() + SERVICE_URL
+//                + (apiKey != null ? PARAM_APP_ID + URLEncoder.encode(apiKey, ENCODING) : "")
+//                + PARAM_TEXT_SINGLE + URLEncoder.encode(text, ENCODING));
+//
+//        final String response = retrieveString(url);
+//        return Language.fromString(response);
+        DetectResult results = retrieveResult(text);
+        if (results != null && !results.isEmpty()) {
+            return Language.fromString(results.get(0).language);
+        }
+        throw new IllegalStateException("Parsing result failed");
     }
 
     /**
@@ -66,33 +76,60 @@ public final class Detect extends MicrosoftTranslatorAPI {
      * @throws Exception on error.
      */
     public static String[] execute(final String[] texts) throws Exception {
+//        //Run the basic service validations first
+//        validateServiceState(texts);
+//        final String textArr = buildStringArrayParam(texts);
+//        final URL url = new URL(getProtocol() + ARRAY_SERVICE_URL
+//                + (apiKey != null ? PARAM_APP_ID + URLEncoder.encode(apiKey, ENCODING) : "")
+//                + PARAM_TEXT_ARRAY + URLEncoder.encode(textArr, ENCODING));
+//        //noinspection UnnecessaryLocalVariable
+//        final String[] response = retrieveStringArr(url);
+//        return response;
+        DetectResult results = retrieveResult(texts);
+        if (results != null && results.size() > 0) {
+            String[] resultArray = new String[results.size()];
+            for (int i = 0; i < results.size(); i++) {
+                resultArray[i] = results.get(i).language;
+            }
+            return resultArray;
+        }
+        throw new IllegalStateException("Parsing result failed");
+    }
+
+    public static DetectResult retrieveResult(String... texts) throws Exception {
         //Run the basic service validations first
         validateServiceState(texts);
-        final String textArr = buildStringArrayParam(texts);
-        final URL url = new URL(getProtocol() + ARRAY_SERVICE_URL
-                + (apiKey != null ? PARAM_APP_ID + URLEncoder.encode(apiKey, ENCODING) : "")
-                + PARAM_TEXT_ARRAY + URLEncoder.encode(textArr, ENCODING));
+        final URL url = new URL(PROTOCOL_HTTPS + SERVICE_URL);
         //noinspection UnnecessaryLocalVariable
-        final String[] response = retrieveStringArr(url);
-        return response;
+        DetectResult result = instance.retrieveResponseV3(url, TextArrayRequest.build(texts), new TypeReference<DetectResult>() {
+        });
+        return result;
     }
 
-    private static void validateServiceState(final String text) throws Exception {
-        final int byteLength = text.getBytes(ENCODING).length;
-        if (byteLength > 10240) {
-            throw new RuntimeException("TEXT_TOO_LARGE - Microsoft Translator (Detect) can handle up to 10,240 bytes per request");
-        }
-        validateServiceState();
-    }
+//    private static void validateServiceState(final String text) throws Exception {
+//        final int byteLength = text.getBytes(ENCODING).length;
+//        if (byteLength > 10240) {
+//            throw new RuntimeException("TEXT_TOO_LARGE - Microsoft Translator (Detect) can handle up to 10,240 bytes per request");
+//        }
+//        validateServiceState();
+//    }
 
     private static void validateServiceState(final String[] texts) throws Exception {
-        int length = 0;
+        if (texts.length > 100) {
+            throw new RuntimeException("TEXT_COUNT_OVER_LIMIT - Microsoft Translator (Detect) can handle up to 100 texts per request");
+        }
         for (String text : texts) {
-            length += text.getBytes(ENCODING).length;
+            String json = instance.toJsonString(new TextArrayRequest.Text(text));
+            if (json.length() > 10000) {
+                throw new RuntimeException("TEXT_TOO_LARGE - Microsoft Translator (Detect) can handle up to 10,000 characters per array element");
+            }
         }
-        if (length > 10240) {
-            throw new RuntimeException("TEXT_TOO_LARGE - Microsoft Translator (Detect) can handle up to 10,240 bytes per request");
+
+        String json = instance.toJsonString(TextArrayRequest.build(texts));
+        if (json.length() > 50000) {
+            throw new RuntimeException("TEXT_TOO_LARGE - Microsoft Translator (Detect) can handle up to 50,000 characters per request");
         }
+
         validateServiceState();
     }
 
