@@ -22,6 +22,10 @@ import java.net.URLEncoder;
 
 import io.github.firemaples.MicrosoftTranslatorAPI;
 import io.github.firemaples.language.Language;
+import io.github.firemaples.models.BreakSentencesResult;
+import io.github.firemaples.models.DetectResult;
+import io.github.firemaples.models.TextArrayRequest;
+import io.github.firemaples.utils.TypeReference;
 
 /**
  * BreakSentences
@@ -36,9 +40,10 @@ import io.github.firemaples.language.Language;
  * @author Jonathan Griggs [jonathan.griggs at gmail.com]
  * @author Firemaples (add new Azure framework support) [firemaples at gmail.com]
  */
-public final class BreakSentences extends MicrosoftTranslatorAPI {
+public final class BreakSentences extends MicrosoftTranslatorAPI<TextArrayRequest, BreakSentencesResult> {
+    private static BreakSentences instance = new BreakSentences();
 
-    private static final String SERVICE_URL = "api.microsofttranslator.com/V2/Ajax.svc/BreakSentences?";
+    private static final String SERVICE_URL = "api.cognitive.microsofttranslator.com/breaksentence?api-version=3.0";
 
     // prevent instantiation
     private BreakSentences() {
@@ -53,26 +58,61 @@ public final class BreakSentences extends MicrosoftTranslatorAPI {
      * @throws Exception on error.
      */
     public static Integer[] execute(final String text, final Language fromLang) throws Exception {
-        //Run the basic service validations first
-        validateServiceState(text, fromLang);
-        final URL url = new URL(getProtocol() + SERVICE_URL
-                + (apiKey != null ? PARAM_APP_ID + URLEncoder.encode(apiKey, ENCODING) : "")
-                + PARAM_SENTENCES_LANGUAGE + URLEncoder.encode(fromLang.toString(), ENCODING)
-                + PARAM_TEXT_SINGLE + URLEncoder.encode(text, ENCODING));
-
-        //noinspection UnnecessaryLocalVariable
-        final Integer[] response = retrieveIntArray(url);
-        return response;
+//        //Run the basic service validations first
+//        validateServiceState(text, fromLang);
+//        final URL url = new URL(getProtocol() + SERVICE_URL
+//                + (apiKey != null ? PARAM_APP_ID + URLEncoder.encode(apiKey, ENCODING) : "")
+//                + PARAM_SENTENCES_LANGUAGE + URLEncoder.encode(fromLang.toString(), ENCODING)
+//                + PARAM_TEXT_SINGLE + URLEncoder.encode(text, ENCODING));
+//
+//        //noinspection UnnecessaryLocalVariable
+//        final Integer[] response = retrieveIntArray(url);
+//        return response;
+        BreakSentencesResult results = retrieveResult(fromLang, text);
+        if (results != null && !results.isEmpty()) {
+            return results.get(0).sentLen;
+        }
+        throw new IllegalStateException("Parsing result failed");
     }
 
-    private static void validateServiceState(final String text, final Language fromLang) throws Exception {
-        final int byteLength = text.getBytes(ENCODING).length;
-        if (byteLength > 10240) {
-            throw new RuntimeException("TEXT_TOO_LARGE - Microsoft Translator (BreakSentences) can handle up to 10,240 bytes per request");
+    public static BreakSentencesResult retrieveResult(Language fromLang, String... texts) throws Exception {
+        //Run the basic service validations first
+        validateServiceState(texts);
+        final URL url = new URL(PROTOCOL_HTTPS + SERVICE_URL
+                + PARAM_SENTENCES_LANGUAGE + URLEncoder.encode(fromLang.toString(), ENCODING));
+        //noinspection UnnecessaryLocalVariable
+        BreakSentencesResult result = instance.retrieveResponseV3(url, TextArrayRequest.build(texts), new TypeReference<BreakSentencesResult>() {
+        });
+        return result;
+    }
+
+    private static void validateServiceState(final String[] texts) throws Exception {
+        if (texts.length > 100) {
+            throw new RuntimeException("TEXT_COUNT_OVER_LIMIT - Microsoft Translator (BreakSentences) can handle up to 100 texts per request");
         }
-        if (Language.AUTO_DETECT.equals(fromLang)) {
-            throw new RuntimeException("BreakSentences does not support AUTO_DETECT Langauge. Please specify the origin language");
+        for (String text : texts) {
+            String json = instance.toJsonString(new TextArrayRequest.Text(text));
+            if (json.length() > 10000) {
+                throw new RuntimeException("TEXT_TOO_LARGE - Microsoft Translator (BreakSentences) can handle up to 10,000 characters per array element");
+            }
         }
+
+        String json = instance.toJsonString(TextArrayRequest.build(texts));
+        if (json.length() > 50000) {
+            throw new RuntimeException("TEXT_TOO_LARGE - Microsoft Translator (BreakSentences) can handle up to 50,000 characters per request");
+        }
+
         validateServiceState();
     }
+
+//    private static void validateServiceState(final String text, final Language fromLang) throws Exception {
+//        final int byteLength = text.getBytes(ENCODING).length;
+//        if (byteLength > 10240) {
+//            throw new RuntimeException("TEXT_TOO_LARGE - Microsoft Translator (BreakSentences) can handle up to 10,240 bytes per request");
+//        }
+//        if (Language.AUTO_DETECT.equals(fromLang)) {
+//            throw new RuntimeException("BreakSentences does not support AUTO_DETECT Langauge. Please specify the origin language");
+//        }
+//        validateServiceState();
+//    }
 }
