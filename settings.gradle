@@ -1,1 +1,3 @@
-include ':library', ':demo'
+include ':microsoft-translator-java-api', ':demo'
+
+project(':microsoft-translator-java-api').projectDir = new File(settingsDir, '/library')

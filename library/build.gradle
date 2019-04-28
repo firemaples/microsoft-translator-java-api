@@ -4,8 +4,8 @@ ext {
     /**
      * Run commands to upload to https://bintray.com/
      *
-     * ./gradlew install
-     * ./gradlew bintrayUpload
+     * ./gradlew microsoft-translator-java-api:install
+     * ./gradlew microsoft-translator-java-api:bintrayUpload
      */
 
     bintrayRepo = 'maven'
@@ -58,8 +58,7 @@ dependencies {
 }
 
 task fatJar(type: Jar) {
-//    baseName = project.name + '-with-dependencies'
-    baseName = 'microsoft-translator-java-api-with-dependencies'
+    baseName = project.name + '-with-dependencies'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }
@@ -68,5 +67,5 @@ sourceCompatibility = "1.7"
 targetCompatibility = "1.7"
 
 //Before running 'fatJar', comment these two lines
-apply from: '../installv1.gradle'
-apply from: '../bintrayv1.gradle'
+apply from: 'installv1.gradle'
+apply from: 'bintrayv1.gradle'
