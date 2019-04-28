@@ -274,7 +274,7 @@ public abstract class MicrosoftTranslatorAPI<RQ, RP> {
                 resultString = inputStreamToString(uc.getInputStream());
             } else {
                 resultString = inputStreamToString(uc.getErrorStream());
-                throw new Exception("Error retrieving token from Microsoft Translator API (" + responseCode + "): " + resultString);
+                throw new Exception("Error retrieving result from Microsoft Translator API (" + responseCode + "): " + resultString);
             }
 
             //noinspection UnnecessaryLocalVariable
