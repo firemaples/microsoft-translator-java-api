@@ -308,7 +308,8 @@ public abstract class MicrosoftTranslatorAPI<RQ, RP> {
      * @return The translated String[].
      * @throws Exception on error.
      */
-    protected static String[] retrieveStringArr(final URL url, final String jsonProperty) throws Exception {
+    protected static String[] retrieveStringArr(final URL url, final String jsonProperty) throws
+            Exception {
         try {
             final String response = retrieveResponse(url);
             return jsonToStringArr(response, jsonProperty);
@@ -366,7 +367,8 @@ public abstract class MicrosoftTranslatorAPI<RQ, RP> {
 
     // Helper method to parse a JSONArray. Reads an array of JSONObjects and returns a String Array
     // containing the toString() of the desired property. If propertyName is null, just return the String value.
-    private static String[] jsonToStringArr(final String inputString, final String propertyName) throws Exception {
+    private static String[] jsonToStringArr(final String inputString,
+                                            final String propertyName) throws Exception {
         final JSONArray jsonArr = (JSONArray) JSONValue.parse(inputString);
         String[] values = new String[jsonArr.size()];
 

@@ -33,18 +33,18 @@ ext {
 
 sourceSets {
     main {
-        java {
-            srcDir '../src/main/java'
-        }
+//        java {
+//            srcDir '../src/main/java'
+//        }
 //        output.classesDir = "$workDir/client/program"
     }
     test {
-        java {
-            srcDir '../src/test/java'
-        }
-        resources {
-            srcDir '../src/test/resources'
-        }
+//        java {
+//            srcDir '../src/test/java'
+//        }
+//        resources {
+//            srcDir '../src/test/resources'
+//        }
 //        output.classesDir = "$workDir/client/tests"
 //        output.resourcesDir = "$workDir/client/tests"
     }
@@ -58,7 +58,8 @@ dependencies {
 }
 
 task fatJar(type: Jar) {
-    baseName = project.name + '-with-dependencies'
+//    baseName = project.name + '-with-dependencies'
+    baseName = 'microsoft-translator-java-api-with-dependencies'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }

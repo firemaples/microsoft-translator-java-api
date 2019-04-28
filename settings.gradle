@@ -1,1 +1,1 @@
-include ':microsoft-translator-java-api'
+include ':library', ':demo'
