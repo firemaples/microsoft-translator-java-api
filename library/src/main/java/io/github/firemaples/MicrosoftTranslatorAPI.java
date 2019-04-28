@@ -269,8 +269,11 @@ public abstract class MicrosoftTranslatorAPI<RQ, RP> {
 
         try {
             final int responseCode = uc.getResponseCode();
-            final String resultString = inputStreamToString(uc.getInputStream());
-            if (responseCode != 200) {
+            final String resultString;
+            if (responseCode == 200 || responseCode == 204) {
+                resultString = inputStreamToString(uc.getInputStream());
+            } else {
+                resultString = inputStreamToString(uc.getErrorStream());
                 throw new Exception("Error retrieving token from Microsoft Translator API (" + responseCode + "): " + resultString);
             }
 
